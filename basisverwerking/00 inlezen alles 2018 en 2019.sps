@@ -187,6 +187,9 @@ match files
 niscode.
 alter type capa5 (a5).
 sort cases capa5 (a).
+
+
+
 SAVE OUTFILE='C:\temp\kadaster\werkbestanden\x_capa5_niscode.sav'
   /COMPRESSED.
 

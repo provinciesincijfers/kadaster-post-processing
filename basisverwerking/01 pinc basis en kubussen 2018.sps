@@ -270,6 +270,23 @@ CACHE.
 EXECUTE.
 DATASET NAME bzl WINDOW=FRONT.
 
+recode niscode ('12030'='12041')
+('12034'='12041')
+('44011'='44083')
+('44049'='44083')
+('44001'='44084')
+('44029'='44084')
+('44036'='44085')
+('44072'='44085')
+('44080'='44085')
+('45017'='45068')
+('45057'='45068')
+('71047'='72042')
+('72040'='72042')
+('72025'='72043')
+('72029'='72043').
+
+
 string stat_sector (a9).
 compute stat_sector = concat(niscode,"ZZZZ").
 rename variables aantal_gezinnen = bewoning_zonder_link.
