@@ -148,6 +148,9 @@ SAVE OUTFILE='C:\temp\kadaster\werkbestanden\koppeling_2019.sav'
 
 
 DATASET ACTIVATE koppeling.
+* de eerste vijf tekens van de capakey bevatten een code die lijken op een niscode en die steeds volledig binnen één gemeente liggen.
+* we maken een tabel die het mogelijk maakt om op basis van die 5 tekens de niscode op te zoeken.
+* die tabel gebruiken we later om percelen (met unieke sleutel capakey) die niet aan een statsec gekoppeld kunnen worden toch nog aan een gemeente te koppelen.
 STRING  capa5 (A5).
 COMPUTE capa5=capakey.
 EXECUTE.
