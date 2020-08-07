@@ -106,6 +106,10 @@ value labels woonfunctie
 0 "geen woonfunctie"
 1 "wel een woonfunctie".
 
+* in 2019 duiken opeens een heel aantal "appartementen" op die duidelijk geen woning zijn.
+* het is niet helemaal duidelijk wat hier dan wel de functie van is, maar we nemen ze alvast niet mee als dingen met een "woonfunctie".
+* in 2018 is dit nog zeer zeldzaam, maar we nemen het toch al mee omwille van de consistentie.
+if aard = "APPARTEMENT #" & subtype_woning="" woonfunctie=0.
 
 * woongelegenheden.
 ** indien woonfunctie=1

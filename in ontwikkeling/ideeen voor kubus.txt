@@ -1,0 +1,32 @@
+
+* dit stuk nog niet klaar.
+
+* kubuslogica 1
+** tel de woonvoorraad
+**dimensies
+- woonfunctie
+- type woongelegenheid (3-deling + missing indien geen woonfunctie)
+- bewoond ja/nee
+- [vervalt] huurder/eigenaar
+- eengezins/meergezins
+
+compute kubus2210_woonvoorraad = v2210_woonvoorraad.
+rename variables woonfunctie=v2210_woonfunctie.
+*v2210_type_woonaanbod.
+rename variables bewoond=v2210_bewoond.
+rename variables eengezin_meergezin=v2210_eengezin_meergezin.
+
+DATASET DECLARE kubus1.
+AGGREGATE
+  /OUTFILE='kubus1'
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_type_woonaanbod v2210_bewoond v2210_eengezin_meergezin
+  /kubus2210_woonvoorraad=SUM(kubus2210_woonvoorraad)
+  /N_BREAK=N.
+
+* kubuslogica 2
+** tel de huishoudens (huidig_bewoond)
+**dimensies
+- woonfunctie
+- type woongelegenheid (3-deling + missing indien geen woonfunctie)
+- [vervalt] bewoond ja/nee
+- huurder/eigenaar > dit vereist nog een transformatie om afzonderlijke rijen voor huurders op een eigenaars-eigendom te kunnen tellen.

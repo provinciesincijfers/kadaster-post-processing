@@ -106,6 +106,11 @@ value labels woonfunctie
 0 "geen woonfunctie"
 1 "wel een woonfunctie".
 
+* in 2019 duiken opeens een heel aantal "appartementen" op die duidelijk geen woning zijn.
+* het is niet helemaal duidelijk wat hier dan wel de functie van is, maar we nemen ze alvast niet mee als dingen met een "woonfunctie".
+* in 2018 is dit nog zeer zeldzaam, maar we nemen het toch al mee omwille van de consistentie.
+if aard = "APPARTEMENT #" & subtype_woning="" woonfunctie=0.
+
 
 * woongelegenheden.
 ** indien woonfunctie=1
@@ -113,6 +118,9 @@ value labels woonfunctie
 *** woonfunctie=1 & wooneenheden=0 >>> woongelegenheid=1 (indien we niet al een grotere waarde hebben ingevuld!).
 ** indien woonfunctie=0 
 *** tel aantal huishoudens
+
+
+
 
 compute woongelegenheden=$sysmis.
 if woonfunctie=1 woongelegenheden=max(wooneenheden,huidig_bewoond).
@@ -199,7 +207,7 @@ value labels eigenaar_huurder
 2 'huurder'
 3 'onbewoond'.
 freq eigenaar_huurder.
-* er zouden enkel onbekende mogen overblijven indien het gata om "valse records" die we hebben toegevoegd om zeker een rij te hebben voor elke statsec (in de praktijk: 10240 rijen).
+
 
 * indicatoren.
 * huishoudens in verhuurde wooneenheden.
@@ -579,7 +587,7 @@ delete variables gewest.
 
 * opmerking: na toepassen van deze regel zou het onmogelijk moeten zijn dat er nog velden zijn met een sysmis.
 
-SAVE TRANSLATE OUTFILE='C:\temp\kadaster\upload\pinc_basis_plat_2019.xlsx'
+SAVE TRANSLATE OUTFILE='C:\temp\kadaster\upload\pinc_basis_plat_2019_alt.xlsx'
   /TYPE=XLS
   /VERSION=12
   /MAP
