@@ -64,31 +64,6 @@ alter type niscode (a5).
 if stat_sector="" stat_sector=concat(niscode,"ZZZZ").
 
 
-* toevoegen alle gebieden om nullen in te lezen!
-
-GET
-  FILE='C:\github\gebiedsniveaus\verzamelbestanden\verwerkt_alle_gebiedsniveaus.sav'.
-DATASET NAME allegebieden WINDOW=FRONT.
-
-DATASET ACTIVATE allegebieden.
-DATASET DECLARE uniekstatsec.
-AGGREGATE
-  /OUTFILE='uniekstatsec'
-  /BREAK=statsec
-  /N_BREAK=N.
-dataset activate uniekstatsec.
-dataset close allegebieden.
-delete variables N_BREAK.
-rename variables statsec=stat_sector.
-
-DATASET ACTIVATE eigendommen.
-ADD FILES /FILE=*
-  /FILE='uniekstatsec'.
-EXECUTE.
-
-DATASET CLOSE uniekstatsec.
-
-
 * EINDE LUIK 1.
 
 
@@ -441,17 +416,14 @@ compute LUIK4=$sysmis.
 
 *voorbereiding.
 * OPGELET: aanpassen - dit kan niet op basis van "jaartal" omdat dit missing is voor de lege sectoren.
-compute period=2019.
 
-string geolevel (a7).
-compute geolevel="statsec".
 
 rename variables stat_sector=geoitem.
 
 DATASET DECLARE aggr.
 AGGREGATE
   /OUTFILE='aggr'
-  /BREAK=geolevel geoitem period
+  /BREAK=geoitem
 /v2210_woonvoorraad=sum(v2210_woonvoorraad)
 /v2210_woonaanbod=sum(v2210_woonaanbod)
 /v2210_wa_indiv=sum(v2210_wa_indiv)
@@ -512,8 +484,11 @@ MATCH FILES /FILE=*
 EXECUTE.
 dataset close uniekstatsec.
 
+compute period=2019.
 
-dataset activate aggr.
+string geolevel (a7).
+compute geolevel="statsec".
+
 * enkel voor het zicht.
 alter type v2210_woonvoorraad
 v2210_woonaanbod
