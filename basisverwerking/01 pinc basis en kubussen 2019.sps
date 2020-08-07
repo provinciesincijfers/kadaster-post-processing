@@ -192,7 +192,7 @@ AGGREGATE
   /woongelegenheden_perceel_tot=SUM(woongelegenheden)
   /aantal_perceeldelen=N.
 
-* deze classificatie geeft aan één rijtje een zinvolle waarde. Aangezien de rest op missing blijft staan, ga je doorgaans direct eindigen met goede resultaten als je 
+* deze classificatie geeft aan Ã©Ã©n rijtje een zinvolle waarde. Aangezien de rest op missing blijft staan, ga je doorgaans direct eindigen met goede resultaten als je 
 berekeningen maakt die dit veld gebruiken.
 if woongelegenheden_perceel_tot =1 eengezin_meergezin = 1.
 if woongelegenheden_perceel_tot >1 eengezin_meergezin = 2.
@@ -233,11 +233,130 @@ if eigenaar_huurder = 2 v2210_huurders=huidig_bewoond.
 ** MAAR OOK extra woningen in eigendommen met inwonende eigenaars.
 if eigenaar_huurder = 1 & huidig_bewoond > 1 v2210_huurders = huidig_bewoond - 1.
 
-* huishoudens eigenaarswoningen (de fout is kleiner als er slechts één inwonend gezin is op een eigendom).
+* huishoudens eigenaarswoningen (de fout is kleiner als er slechts Ã©Ã©n inwonend gezin is op een eigendom).
 if eigenaar_huurder = 1 v2210_inwonend_eigenaarsgezin=1.
 EXECUTE.
 ** einde huurder/eigenaar
 
+
+*start bouwjaar.
+* tussenstap/dummy code obv variabele 'bouwjaar' (naar gewenste categorieÃ«n).
+* de categorie 'onbekend'  (code12) bevat alle missing values + de categorie '0000' (="verkoop op plan") + elk jaartal vanaf 2019.
+** deze code moet aangepast worden voor elke nieuwe dataset (laatste jaartal dat wordt meegenomen in de categorie 'na 2010').
+RECODE bouwjaar 
+(1=1) 
+(2=1) 
+(3=1) 
+(4=2) 
+(5=3) 
+(1931 thru 1945=4) 
+(1946 thru 1960=5) 
+(1961 thru 1970=6) 
+(1971 thru 1980=7) 
+(1981 thru 1990=8) 
+(1991 thru 2000=9) 
+(2001 thru 2010=10) 
+(2011 thru 2018=11) 
+(ELSE=12) INTO bouwjaar_cat.
+
+* dummy bouwjaar enkel van de woongelegenheden (obv variabele v2210_woonvoorraad).
+* de categorie 'onbekend' (label value 12) bevat alle missing values + de categorie '0000' (="verkoop op plan") + elk jaartal vanaf 2019.
+** deze code (value label) moet aangepast worden voor elke nieuwe dataset (laatste jaartal dat wordt meegenomen in de categorie 'na 2010').
+compute bouwjaar_cat_wgl=$sysmis.
+if v2210_woonvoorraad>=1 bouwjaar_cat_wgl=bouwjaar_cat.
+value labels bouwjaar_cat
+1 "voor 1900"
+2 "1900-1918"
+3 "1919-1930"
+4 "1931-1945"
+5 "1946-1960"
+6 "1961-1970"
+7 "1971-1980"
+8 "1981-1990"
+9 "1991-2000"
+10 "2001-2010"
+11 "na 2010"
+12 "onbekend".
+
+* indicatoren bouwjaar (enkel bij woongelegenheden, obv woonvoorraad).
+* al deze indicatoren kunnen eenvoudig opgeteld worden.
+if bouwjaar_cat_wgl=1 v2210_wv_bj_voor1900=woongelegenheden.
+if bouwjaar_cat_wgl=2 v2210_wv_bj_1900_1918=woongelegenheden.
+if bouwjaar_cat_wgl=3 v2210_wv_bj_1919_1930=woongelegenheden.
+if bouwjaar_cat_wgl=4 v2210_wv_bj_1931_1945=woongelegenheden.
+if bouwjaar_cat_wgl=5 v2210_wv_bj_1946_1960=woongelegenheden.
+if bouwjaar_cat_wgl=6 v2210_wv_bj_1961_1970=woongelegenheden.
+if bouwjaar_cat_wgl=7 v2210_wv_bj_1971_1980=woongelegenheden.
+if bouwjaar_cat_wgl=8 v2210_wv_bj_1981_1990=woongelegenheden.
+if bouwjaar_cat_wgl=9 v2210_wv_bj_1991_2000=woongelegenheden.
+if bouwjaar_cat_wgl=10 v2210_wv_bj_2001_2010=woongelegenheden.
+if bouwjaar_cat_wgl=11 v2210_wv_bj_na2010=woongelegenheden.
+if bouwjaar_cat_wgl=12 v2210_wv_bj_onbekend=woongelegenheden. 
+
+*tussenstap/dummy 'laatste wijzigingen' naar gewenste categorieÃ«n (met zelfde label values als bouwjaar_cat).
+* de categorie 'onbekend' (code12) bevat alle missing values + alle jaartallen tem 1982 + elk jaartal vanaf 2019 (bij dataset 1/1/2019).
+** deze code moet aangepast worden voor elke nieuwe dataset (laatste jaartal dat wordt meegenomen in de categorie 'na 2010').
+RECODE laatste_wijziging 
+(1983 thru 1990=8) 
+(1991 thru 2000=9) 
+(2001 thru 2010=10) 
+(2011 thru 2018=11) 
+(ELSE=12) INTO laatste_wijziging_cat.
+
+* dummy laatste wijziging enkel van de woongelegenheden (obv variabele v2210_woonvoorraad).
+* de categorie 'onbekend' (label value 12) bevat alle missing values + alle jaartallen tem 1982 + elk jaartal vanaf 2019.
+** deze code (value labels) moet aangepast worden voor elke nieuwe dataset (laatste jaartal dat wordt meegenomen in de categorie 'na 2010').
+compute laatste_wijziging_cat_wgl=$sysmis.
+if v2210_woonvoorraad>=1 laatste_wijziging_cat_wgl=laatste_wijziging_cat.
+value labels laatste_wijziging_cat
+8 "1983-1990"
+9 "1991-2000"
+10 "2001-2010"
+11 "na 2010"
+12 "onbekend".
+
+* indicatoren laatste wijziging (enkel bij woongelegenheden, obv woonvoorraad).
+* al deze indicatoren kunnen eenvoudig opgeteld worden.
+if laatste_wijziging_cat_wgl=8 v2210_wv_lw_1983_1990=woongelegenheden.
+if laatste_wijziging_cat_wgl=9 v2210_wv_lw_1991_2000=woongelegenheden.
+if laatste_wijziging_cat_wgl=10 v2210_wv_lw_2001_2010=woongelegenheden.
+if laatste_wijziging_cat_wgl=11 v2210_wv_lw_na2010=woongelegenheden.
+if laatste_wijziging_cat_wgl=12 v2210_wv_lw_onbekend=woongelegenheden.
+
+* dummy combinatie recente wijziging of bouwjaar, enkel van woongelegenheden.
+** deze code (value labels) moet aangepast worden voor elke nieuwe dataset (laatste jaartal dat wordt meegenomen in de categorie 'na 2010').
+compute  wijziging_bouwjaar_wgl=laatste_wijziging_cat_wgl.
+if laatste_wijziging_cat_wgl=12 wijziging_bouwjaar_wgl=bouwjaar_cat_wgl.
+value labels  wijziging_bouwjaar_wgl
+1 "voor 1900"
+2 "1900-1918"
+3 "1919-1930"
+4 "1931-1945"
+5 "1946-1960"
+6 "1961-1970"
+7 "1971-1980"
+8 "1981-1990"
+9 "1991-2000"
+10 "2001-2010"
+11 "na 2010"
+12 "onbekend".
+
+* indicatoren recente wijziging of bouwjaar (enkel bij woongelegenheden)
+* al deze indicatoren kunnen eenvoudig opgeteld worden.
+if wijziging_bouwjaar_wgl=1 v2210_wv_lwbj_voor1900=woongelegenheden.
+if wijziging_bouwjaar_wgl=2 v2210_wv_lwbj_1900_1918=woongelegenheden.
+if wijziging_bouwjaar_wgl=3 v2210_wv_lwbj_1919_1930=woongelegenheden.
+if wijziging_bouwjaar_wgl=4 v2210_wv_lwbj_1931_1945=woongelegenheden.
+if wijziging_bouwjaar_wgl=5 v2210_wv_lwbj_1946_1960=woongelegenheden.
+if wijziging_bouwjaar_wgl=6 v2210_wv_lwbj_1961_1970=woongelegenheden.
+if wijziging_bouwjaar_wgl=7 v2210_wv_lwbj_1971_1980=woongelegenheden.
+if wijziging_bouwjaar_wgl=8 v2210_wv_lwbj_1981_1990=woongelegenheden.
+if wijziging_bouwjaar_wgl=9 v2210_wv_lwbj_1991_2000=woongelegenheden.
+if wijziging_bouwjaar_wgl=10 v2210_wv_lwbj_2001_2010=woongelegenheden.
+if wijziging_bouwjaar_wgl=11 v2210_wv_lwbj_na2010=woongelegenheden.
+if wijziging_bouwjaar_wgl=12 v2210_wv_lwbj_onbekend=woongelegenheden.
+EXECUTE.
+** einde bouwjaar.
 
 
 * EINDE LUIK 2.
@@ -341,7 +460,36 @@ AGGREGATE
 /v2210_huishoudens=sum(v2210_huishoudens)
 /v2210_huurders=sum(v2210_huurders)
 /v2210_inwonend_eigenaarsgezin=sum(v2210_inwonend_eigenaarsgezin)
-/v2210_hh_onbekend=sum(v2210_hh_onbekend).
+/v2210_hh_onbekend=sum(v2210_hh_onbekend)
+/v2210_wv_bj_voor1900=sum(v2210_wv_bj_voor1900)
+/v2210_wv_bj_1900_1918=sum(v2210_wv_bj_1900_1918)
+/v2210_wv_bj_1919_1930=sum(v2210_wv_bj_1919_1930)
+/v2210_wv_bj_1931_1945=sum(v2210_wv_bj_1931_1945)
+/v2210_wv_bj_1946_1960=sum(v2210_wv_bj_1946_1960)
+/v2210_wv_bj_1961_1970=sum(v2210_wv_bj_1961_1970)
+/v2210_wv_bj_1971_1980=sum(v2210_wv_bj_1971_1980)
+/v2210_wv_bj_1981_1990=sum(v2210_wv_bj_1981_1990)
+/v2210_wv_bj_1991_2000=sum(v2210_wv_bj_1991_2000)
+/v2210_wv_bj_2001_2010=sum(v2210_wv_bj_2001_2010)
+/v2210_wv_bj_na2010=sum(v2210_wv_bj_na2010)
+/v2210_wv_bj_onbekend=sum(v2210_wv_bj_onbekend)
+/v2210_wv_lw_1983_1990=sum(v2210_wv_lw_1983_1990)
+/v2210_wv_lw_1991_2000=sum(v2210_wv_lw_1991_2000)
+/v2210_wv_lw_2001_2010=sum(v2210_wv_lw_2001_2010)
+/v2210_wv_lw_na2010=sum(v2210_wv_lw_na2010)
+/v2210_wv_lw_onbekend=sum(v2210_wv_lw_onbekend)
+/v2210_wv_lwbj_voor1900=sum(v2210_wv_lwbj_voor1900)
+/v2210_wv_lwbj_1900_1918=sum(v2210_wv_lwbj_1900_1918)
+/v2210_wv_lwbj_1919_1930=sum(v2210_wv_lwbj_1919_1930)
+/v2210_wv_lwbj_1931_1945=sum(v2210_wv_lwbj_1931_1945)
+/v2210_wv_lwbj_1946_1960=sum(v2210_wv_lwbj_1946_1960)
+/v2210_wv_lwbj_1961_1970=sum(v2210_wv_lwbj_1961_1970)
+/v2210_wv_lwbj_1971_1980=sum(v2210_wv_lwbj_1971_1980)
+/v2210_wv_lwbj_1981_1990=sum(v2210_wv_lwbj_1981_1990)
+/v2210_wv_lwbj_1991_2000=sum(v2210_wv_lwbj_1991_2000)
+/v2210_wv_lwbj_2001_2010=sum(v2210_wv_lwbj_2001_2010)
+/v2210_wv_lwbj_na2010=sum(v2210_wv_lwbj_na2010)
+/v2210_wv_lwbj_onbekend=sum(v2210_wv_lwbj_onbekend).
 
 dataset activate aggr.
 * enkel voor het zicht.
@@ -358,7 +506,36 @@ v2210_wv_mg_11p
 v2210_huishoudens
 v2210_huurders
 v2210_inwonend_eigenaarsgezin
-v2210_hh_onbekend (f8.0).
+v2210_hh_onbekend
+v2210_wv_bj_voor1900
+v2210_wv_bj_1900_1918
+v2210_wv_bj_1919_1930
+v2210_wv_bj_1931_1945
+v2210_wv_bj_1946_1960
+v2210_wv_bj_1961_1970
+v2210_wv_bj_1971_1980
+v2210_wv_bj_1981_1990
+v2210_wv_bj_1991_2000
+v2210_wv_bj_2001_2010
+v2210_wv_bj_na2010
+v2210_wv_bj_onbekend
+v2210_wv_lw_1983_1990
+v2210_wv_lw_1991_2000
+v2210_wv_lw_2001_2010
+v2210_wv_lw_na2010
+v2210_wv_lw_onbekend
+v2210_wv_lwbj_voor1900
+v2210_wv_lwbj_1900_1918
+v2210_wv_lwbj_1919_1930
+v2210_wv_lwbj_1931_1945
+v2210_wv_lwbj_1946_1960
+v2210_wv_lwbj_1961_1970
+v2210_wv_lwbj_1971_1980
+v2210_wv_lwbj_1981_1990
+v2210_wv_lwbj_1991_2000
+v2210_wv_lwbj_2001_2010
+v2210_wv_lwbj_na2010
+v2210_wv_lwbj_onbekend (f8.0).
 
 * ontbreken van gegevens betekent dat het er geen enkele is.
 do if char.index(geoitem,"ZZZZ")=0.
@@ -375,7 +552,36 @@ v2210_wv_mg_11p
 v2210_huishoudens
 v2210_huurders
 v2210_inwonend_eigenaarsgezin 
-v2210_hh_onbekend (missing=0).
+v2210_hh_onbekend
+v2210_wv_bj_voor1900
+v2210_wv_bj_1900_1918
+v2210_wv_bj_1919_1930
+v2210_wv_bj_1931_1945
+v2210_wv_bj_1946_1960
+v2210_wv_bj_1961_1970
+v2210_wv_bj_1971_1980
+v2210_wv_bj_1981_1990
+v2210_wv_bj_1991_2000
+v2210_wv_bj_2001_2010
+v2210_wv_bj_na2010
+v2210_wv_bj_onbekend
+v2210_wv_lw_1983_1990
+v2210_wv_lw_1991_2000
+v2210_wv_lw_2001_2010
+v2210_wv_lw_na2010
+v2210_wv_lw_onbekend
+v2210_wv_lwbj_voor1900
+v2210_wv_lwbj_1900_1918
+v2210_wv_lwbj_1919_1930
+v2210_wv_lwbj_1931_1945
+v2210_wv_lwbj_1946_1960
+v2210_wv_lwbj_1961_1970
+v2210_wv_lwbj_1971_1980
+v2210_wv_lwbj_1981_1990
+v2210_wv_lwbj_1991_2000
+v2210_wv_lwbj_2001_2010
+v2210_wv_lwbj_na2010
+v2210_wv_lwbj_onbekend (missing=0).
 end if.
 
 * nullen in gebied onbekend verwijderen we.
@@ -393,7 +599,36 @@ v2210_wv_mg_11p
 v2210_huishoudens
 v2210_huurders
 v2210_inwonend_eigenaarsgezin 
-v2210_hh_onbekend (0=sysmis).
+v2210_hh_onbekend
+v2210_wv_bj_voor1900
+v2210_wv_bj_1900_1918
+v2210_wv_bj_1919_1930
+v2210_wv_bj_1931_1945
+v2210_wv_bj_1946_1960
+v2210_wv_bj_1961_1970
+v2210_wv_bj_1971_1980
+v2210_wv_bj_1981_1990
+v2210_wv_bj_1991_2000
+v2210_wv_bj_2001_2010
+v2210_wv_bj_na2010
+v2210_wv_bj_onbekend
+v2210_wv_lw_1983_1990
+v2210_wv_lw_1991_2000
+v2210_wv_lw_2001_2010
+v2210_wv_lw_na2010
+v2210_wv_lw_onbekend
+v2210_wv_lwbj_voor1900
+v2210_wv_lwbj_1900_1918
+v2210_wv_lwbj_1919_1930
+v2210_wv_lwbj_1931_1945
+v2210_wv_lwbj_1946_1960
+v2210_wv_lwbj_1961_1970
+v2210_wv_lwbj_1971_1980
+v2210_wv_lwbj_1981_1990
+v2210_wv_lwbj_1991_2000
+v2210_wv_lwbj_2001_2010
+v2210_wv_lwbj_na2010
+v2210_wv_lwbj_onbekend (0=sysmis).
 end if.
 
 * indien er niets van nuttige info in een "gebied onbekend" staat, dan gooien we dit integraal weg.
@@ -412,7 +647,36 @@ v2210_wv_mg_11p,
 v2210_huishoudens,
 v2210_huurders,
 v2210_inwonend_eigenaarsgezin,
-v2210_hh_onbekend) > 0 houden=1.
+v2210_hh_onbekend,
+v2210_wv_bj_voor1900,
+v2210_wv_bj_1900_1918,
+v2210_wv_bj_1919_1930,
+v2210_wv_bj_1931_1945,
+v2210_wv_bj_1946_1960,
+v2210_wv_bj_1961_1970,
+v2210_wv_bj_1971_1980,
+v2210_wv_bj_1981_1990,
+v2210_wv_bj_1991_2000,
+v2210_wv_bj_2001_2010,
+v2210_wv_bj_na2010,
+v2210_wv_bj_onbekend,
+v2210_wv_lw_1983_1990,
+v2210_wv_lw_1991_2000,
+v2210_wv_lw_2001_2010,
+v2210_wv_lw_na2010,
+v2210_wv_lw_onbekend,
+v2210_wv_lwbj_voor1900,
+v2210_wv_lwbj_1900_1918,
+v2210_wv_lwbj_1919_1930,
+v2210_wv_lwbj_1931_1945,
+v2210_wv_lwbj_1946_1960,
+v2210_wv_lwbj_1961_1970,
+v2210_wv_lwbj_1971_1980,
+v2210_wv_lwbj_1981_1990,
+v2210_wv_lwbj_1991_2000,
+v2210_wv_lwbj_2001_2010,
+v2210_wv_lwbj_na2010,
+v2210_wv_lwbj_onbekend) > 0 houden=1.
 EXECUTE.
 DATASET ACTIVATE aggr.
 FILTER OFF.
