@@ -37,9 +37,9 @@ DATASET NAME bevolking WINDOW=FRONT.
 
 if NATIONAAL_NUMMER = RRNR_HOOFDPERSOON & refpers = "N" collectief=1.
 if  NATIONAAL_NUMMER = RRNR_HOOFDPERSOON & refpers = "J" privaat=1.
-if  NATIONAAL_NUMMER ~= RRNR_HOOFDPERSOON gezinslid=1.
-compute inwoner=1.
-EXECUTE.
+*if  NATIONAAL_NUMMER ~= RRNR_HOOFDPERSOON gezinslid=1.
+*compute inwoner=1.
+*EXECUTE.
 
 DATASET ACTIVATE bevolking.
 DATASET DECLARE huishoudens.
@@ -47,7 +47,33 @@ AGGREGATE
   /OUTFILE='huishoudens'
   /BREAK=ADRESCODE RRNR_HOOFDPERSOON
   /privaat_hh=sum(privaat)
+  /collectief=sum(collectief)
   /gezinsleden=N.
 dataset activate huishoudens.
 dataset close bevolking.
 
+
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE="C:\temp\kadaster\2019\KAD_2019_eigendom_adres.txt"
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  provincie A4
+  jaartal 4X
+  capakey A17
+  eigendom_id F9.0
+  straatnaamcode F6.0
+  huisbis A26
+  bepaald_via A8
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME DataSet6 WINDOW=FRONT.

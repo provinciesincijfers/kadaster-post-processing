@@ -566,7 +566,7 @@ compute geolevel="gemeente".
 DATASET DECLARE kubus2.
 AGGREGATE
   /OUTFILE='kubus2'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin
   /kubus2210_woongelegenheden=SUM(kubus2210_woongelegenheden).
 
 
