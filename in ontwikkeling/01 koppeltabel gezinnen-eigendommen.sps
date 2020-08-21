@@ -213,11 +213,11 @@ EXECUTE.
 recode matchsequence (0=1).
 
 DATASET ACTIVATE crabrr.
-rename variables teller_crab=teller_crabrr.
 SORT CASES BY straatnaamcode(A) huisbis(A) matchsequence (a).
 
 
 DATASET ACTIVATE eigadres.
+rename variables teller_crab=teller_crabrr.
 MATCH FILES /FILE=*
   /TABLE='crabrr'
   /BY straatnaamcode huisbis MatchSequence .
@@ -233,9 +233,61 @@ AGGREGATE
   /BREAK=eigendom_id adrescode
   /huidig_bewoond=MAX(huidig_bewoond).
 DATASET ACTIVATE eigadres.
+alter type adrescode (f12.0).
+
+* we hebben een goede verdeelsleutel nodig: hetzelfde adres kan bij meerdere eigendommen horen; we moeten de iegndommen "opvullen" op basis van het aantal huishoudens dat Ilse toekende.
 
 
-* nu enkel nog in eigadres rijen bijmaken op basis van huidig bewoond, zodat er uniek gelinkt kan worden aan de huishoudens.
+
+* binnenhalen bevolking en vereenvoudigen.
+GET 
+  SAS DATA='C:\temp\overstroming\i_lhc2_2019.sas7bdat'
+  /formats='C:\temp\overstroming\formout2.sas7bdat'.
+DATASET NAME bevolking WINDOW=FRONT. 
+
+DATASET copy huishoudens.
+dataset activate huishoudens.
+FILTER OFF.
+USE ALL.
+SELECT IF (refpers = "J").
+EXECUTE.
+
+match files
+/file=*
+/keep=ADRESCODE NATIONAAL_NUMMER.
+compute privaat_hh=1.
+EXECUTE.
+
+
+FILTER OFF.
+USE ALL.
+SELECT IF (ADRESCODE ~= "" & ADRESCODE ~= "000000000000" & ADRESCODE ~= "000099990000").
+EXECUTE.
+
+alter type adrescode (f12.0).
+
+DATASET ACTIVATE huishoudens.
+DATASET DECLARE hhadres.
+AGGREGATE
+  /OUTFILE='hhadres'
+  /BREAK=ADRESCODE
+  /huishoudens=N.
+
+DATASET ACTIVATE eigadres.
+sort cases adrescode (a).
+MATCH FILES /FILE=*
+  /TABLE='hhadres'
+  /BY ADRESCODE.
+EXECUTE.
+dataset close hhadres.
+
+FILTER OFF.
+USE ALL.
+SELECT IF (huishoudens > 0).
+EXECUTE.
+
+
+* nu enkel nog in eigadres rijen bijmaken op basis van huishoudens, zodat elk huishouden aan elke combi kan gelinkt worden.
 * volgnummer toekennen; idem dito in "huishoudens"
 
 dataset activate eigadres.
@@ -243,20 +295,20 @@ DATASET COPY  teontdubbelen.
 DATASET ACTIVATE  teontdubbelen.
 FILTER OFF.
 USE ALL.
-SELECT IF (huidig_bewoond > 1).
+SELECT IF (huishoudens > 1).
 EXECUTE.
 
-LOOP id=1 to 567. 
+LOOP id=1 to 456. 
 XSAVE outfile='C:\temp\kadaster\werkbestanden\temp\manyrow.sav' /keep all. 
 END LOOP. 
 EXECUTE. 
 GET file 'C:\temp\kadaster\werkbestanden\temp\manyrow.sav'. 
 DATASET NAME ontdubbeld WINDOW=FRONT.
-SELECT IF (id LE huidig_bewoond). 
+SELECT IF (id <= huishoudens). 
 EXECUTE.
 
 DATASET ACTIVATE eigadres.
-SELECT IF (huidig_bewoond =1).
+SELECT IF (huishoudens =1).
 compute id=1.
 
 DATASET ACTIVATE eigadres.
@@ -266,91 +318,8 @@ EXECUTE.
 dataset close ontdubbeld.
 dataset close teontdubbelen.
 
-ALTER TYPE adrescode (f12.0).
-SORT CASES BY ADRESCODE(A).
-MATCH FILES
-  /FILE=*
-  /BY ADRESCODE
-  /FIRST=PrimaryFirst
-  /LAST=PrimaryLast.
-DO IF (PrimaryFirst).
-COMPUTE  MatchSequence=1-PrimaryLast.
-ELSE.
-COMPUTE  MatchSequence=MatchSequence+1.
-END IF.
-LEAVE  MatchSequence.
-FORMATS  MatchSequence (f7).
-MATCH FILES
-  /FILE=*
-  /DROP=PrimaryFirst PrimaryLast.
-EXECUTE.
-delete variables id.
-rename variables matchsequence=id.
-recode id (0=1).
 
 
-* binnenhalen bevolking en vereenvoudigen.
-GET 
-  SAS DATA='C:\temp\overstroming\i_lhc2_2019.sas7bdat'.
-DATASET NAME bevolking WINDOW=FRONT. 
-
-* todo: uitzuiveren gezinshoofden die bij meerdere adressen genoemd worden.
-
-if NATIONAAL_NUMMER = RRNR_HOOFDPERSOON & refpers = "N" collectief=1.
-if  NATIONAAL_NUMMER = RRNR_HOOFDPERSOON & refpers = "J" privaat=1.
-if  NATIONAAL_NUMMER ~= RRNR_HOOFDPERSOON gezinslid=1.
-compute inwoner=1.
-EXECUTE.
-
-FILTER OFF.
-USE ALL.
-SELECT IF (privaat=1 | collectief=1).
-EXECUTE.
-
-DATASET ACTIVATE bevolking.
-DATASET DECLARE huishoudens.
-AGGREGATE
-  /OUTFILE='huishoudens'
-  /BREAK=ADRESCODE NATIONAAL_NUMMER
-  /privaat_hh=sum(privaat)
-  /collectief=sum(collectief).
-dataset activate huishoudens.
-
-FILTER OFF.
-USE ALL.
-SELECT IF (ADRESCODE ~= "" & ADRESCODE ~= "000000000000" & ADRESCODE ~= "000099990000").
-EXECUTE.
-
-DATASET ACTIVATE huishoudens.
-AGGREGATE
-  /OUTFILE=* MODE=ADDVARIABLES
-  /BREAK=ADRESCODE
-  /rradres_met_meerdere_HH=N.
-alter type adrescode (f12.0).
-
-
-
-DATASET ACTIVATE huishoudens.
-SORT CASES BY ADRESCODE(A).
-MATCH FILES
-  /FILE=*
-  /BY ADRESCODE
-  /FIRST=PrimaryFirst
-  /LAST=PrimaryLast.
-DO IF (PrimaryFirst).
-COMPUTE  MatchSequence=1-PrimaryLast.
-ELSE.
-COMPUTE  MatchSequence=MatchSequence+1.
-END IF.
-LEAVE  MatchSequence.
-FORMATS  MatchSequence (f7).
-MATCH FILES
-  /FILE=*
-  /DROP=PrimaryFirst PrimaryLast.
-EXECUTE.
-recode id (0=1).
-rename variables matchsequence=id.
-recode id (0=1).
 
 
 
@@ -363,59 +332,274 @@ MATCH FILES /FILE=*
   /BY adrescode id.
 EXECUTE.
 
-* bestand met mismatch om verder te bestuderen.
-DATASET DECLARE testbewoondeig.
-AGGREGATE
-  /OUTFILE='testbewoondeig'
-  /BREAK=eigendom_id
-  /huidig_bewoond_max=MAX(huidig_bewoond) 
-  /privaat_hh_sum=SUM(privaat_hh) 
-  /collectief_sum=SUM(collectief).
+dataset name eigadres.
+dataset copy backupkoppeling.
 
-DATASET ACTIVATE testbewoondeig.
-RECODE privaat_hh_sum collectief_sum (SYSMIS=0).
-compute hh_tot=privaat_hh_sum+collectief_sum.
-
-FILTER OFF.
-USE ALL.
-SELECT IF (huidig_bewoond_max ~= hh_tot).
-EXECUTE.
-
-
-SAVE TRANSLATE OUTFILE='C:\temp\kadaster\werkbestanden\eigendom met ongelijke resultaten.xlsx'
-  /TYPE=XLS
-  /VERSION=12
-  /MAP
-  /FIELDNAMES VALUE=NAMES
-  /CELLS=VALUES
-/REPLACE.
-
-dataset activate eigadres.
-dataset close testbewoondeig.
 
 DATASET ACTIVATE eigadres.
-
-* verwijder beperkt aantal cases met een mismatch.
 FILTER OFF.
 USE ALL.
-SELECT IF (NATIONAAL_NUMMER>0).
+SELECT IF (NATIONAAL_NUMMER > 0).
 EXECUTE.
 
-* gecontroleerd: gezinshoofden worden steeds maar aan één enkel eigendom toegekend.
+
+
+
+* Identify Duplicate Cases.
+SORT CASES BY NATIONAAL_NUMMER(A).
+MATCH FILES
+  /FILE=*
+  /BY NATIONAAL_NUMMER
+  /FIRST=PrimaryFirst_1
+  /LAST=PrimaryLast_1.
+DO IF (PrimaryFirst_1).
+COMPUTE  MatchSequence_1=1-PrimaryLast_1.
+ELSE.
+COMPUTE  MatchSequence_1=MatchSequence_1+1.
+END IF.
+LEAVE  MatchSequence_1.
+FORMATS  MatchSequence_1 (f7).
+EXECUTE.
+
+if matchsequence_1=0 nn_toegekend=1.
+sort cases eigendom_id (a).
+do if (eigendom_id~=lag(eigendom_id) | (eigendom_id=lag(eigendom_id) & adrescode=lag(adrescode))).
+if id=matchsequence_1 nn_toegekend=1.
+end if.
+
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=NATIONAAL_NUMMER
+  /nn_num2=N
+  /nn_toegekend_max=max(nn_toegekend).
+
+compute #teverwijderen=0.
+if missing(nn_toegekend) & nn_toegekend_max=1 #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=eigendom_id
+  /toegekende_inwoners=sum(nn_toegekend).
+
+
+compute #teverwijderen=0.
+if huidig_bewoond<=toegekende_inwoners & missing(nn_toegekend) #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+
+delete variables PrimaryFirst_1
+PrimaryLast_1
+MatchSequence_1.
+
+* Identify Duplicate Cases.
+SORT CASES BY NATIONAAL_NUMMER(A).
+MATCH FILES
+  /FILE=*
+  /BY NATIONAAL_NUMMER
+  /FIRST=PrimaryFirst
+  /LAST=PrimaryLast.
+DO IF (PrimaryFirst).
+COMPUTE  MatchSequence=1-PrimaryLast.
+ELSE.
+COMPUTE  MatchSequence=MatchSequence+1.
+END IF.
+LEAVE  MatchSequence.
+FORMATS  MatchSequence (f7).
+COMPUTE  InDupGrp=MatchSequence>0.
+SORT CASES InDupGrp(D).
+VARIABLE LABELS  PrimaryLast 'Indicator of each last matching case as Primary' MatchSequence 
+    'Sequential count of matching cases'.
+VALUE LABELS  PrimaryLast 0 'Duplicate Case' 1 'Primary Case'.
+VARIABLE LEVEL  PrimaryLast (ORDINAL) /MatchSequence (SCALE).
+EXECUTE.
+
+sort cases eigendom_id (a) nn_toegekend (a).
+if eigendom_id~=lag(eigendom_id) nn_toeken2=toegekende_inwoners.
+EXECUTE.
+do if eigendom_id~=lag(eigendom_id) & primaryfirst = 1 & missing(nn_toegekend) & nn_toeken2<huidig_bewoond.
+compute nn_toegekend=1.
+compute nn_toeken2=nn_toeken2+1.
+end if.
+do if eigendom_id=lag(eigendom_id) & primaryfirst = 1 & missing(nn_toegekend) & lag(nn_toeken2)<huidig_bewoond.
+compute nn_toegekend=1.
+compute nn_toeken2=lag(nn_toeken2)+1.
+end if.
+EXECUTE.
+
+delete variables PrimaryFirst
+PrimaryLast
+MatchSequence
+InDupGrp.
+
+
+delete variables nn_toegekend_max.
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=NATIONAAL_NUMMER
+  /nn_toegekend_max=max(nn_toegekend).
+
+compute #teverwijderen=0.
+if missing(nn_toegekend) & nn_toegekend_max=1 #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+delete variables toegekende_inwoners.
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=eigendom_id
+  /toegekende_inwoners=sum(nn_toegekend).
+
+
+compute #teverwijderen=0.
+if huidig_bewoond=toegekende_inwoners & missing(nn_toegekend) #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+
+
+* Identify Duplicate Cases.
+SORT CASES BY NATIONAAL_NUMMER(A).
+MATCH FILES
+  /FILE=*
+  /BY NATIONAAL_NUMMER
+  /FIRST=PrimaryFirst
+  /LAST=PrimaryLast.
+DO IF (PrimaryFirst).
+COMPUTE  MatchSequence=1-PrimaryLast.
+ELSE.
+COMPUTE  MatchSequence=MatchSequence+1.
+END IF.
+LEAVE  MatchSequence.
+FORMATS  MatchSequence (f7).
+COMPUTE  InDupGrp=MatchSequence>0.
+SORT CASES InDupGrp(D).
+VARIABLE LABELS  PrimaryLast 'Indicator of each last matching case as Primary' MatchSequence 
+    'Sequential count of matching cases'.
+VALUE LABELS  PrimaryLast 0 'Duplicate Case' 1 'Primary Case'.
+VARIABLE LEVEL  PrimaryLast (ORDINAL) /MatchSequence (SCALE).
+EXECUTE.
+
+if primaryfirst=1 & huidig_bewoond > toegekende_inwoners nn_toegekend=1.
+EXECUTE.
+
+
+
+delete variables PrimaryFirst
+PrimaryLast
+MatchSequence
+InDupGrp.
+
+delete variables nn_toegekend_max.
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=NATIONAAL_NUMMER
+  /nn_toegekend_max=max(nn_toegekend).
+
+compute #teverwijderen=0.
+if missing(nn_toegekend) & nn_toegekend_max=1 #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+delete variables toegekende_inwoners.
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=eigendom_id
+  /toegekende_inwoners=sum(nn_toegekend).
+recode toegekende_inwoners (missing=0).
+
+compute #teverwijderen=0.
+if huidig_bewoond=toegekende_inwoners & missing(nn_toegekend) #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+
+* Identify Duplicate Cases.
+SORT CASES BY NATIONAAL_NUMMER(A).
+MATCH FILES
+  /FILE=*
+  /BY NATIONAAL_NUMMER
+  /FIRST=PrimaryFirst
+  /LAST=PrimaryLast.
+DO IF (PrimaryFirst).
+COMPUTE  MatchSequence=1-PrimaryLast.
+ELSE.
+COMPUTE  MatchSequence=MatchSequence+1.
+END IF.
+LEAVE  MatchSequence.
+FORMATS  MatchSequence (f7).
+COMPUTE  InDupGrp=MatchSequence>0.
+SORT CASES InDupGrp(D).
+VARIABLE LABELS  PrimaryLast 'Indicator of each last matching case as Primary' MatchSequence 
+    'Sequential count of matching cases'.
+VALUE LABELS  PrimaryLast 0 'Duplicate Case' 1 'Primary Case'.
+VARIABLE LEVEL  PrimaryLast (ORDINAL) /MatchSequence (SCALE).
+EXECUTE.
+
+if indupgrp=1 & nationaal_nummer~=lag(nationaal_nummer) & huidig_bewoond>toegekende_inwoners nn_toegekend=1.
+if indupgrp=1 & MatchSequence=2 & missing(lag(nn_toegekend)) &  huidig_bewoond>toegekende_inwoners nn_toegekend=1.
+EXECUTE.
+
+
+
+delete variables PrimaryFirst
+PrimaryLast
+MatchSequence
+InDupGrp.
+
+delete variables nn_toegekend_max.
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=NATIONAAL_NUMMER
+  /nn_toegekend_max=max(nn_toegekend).
+
+compute #teverwijderen=0.
+if missing(nn_toegekend) & nn_toegekend_max=1 #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+delete variables toegekende_inwoners.
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=eigendom_id
+  /toegekende_inwoners=sum(nn_toegekend).
+recode toegekende_inwoners (missing=0).
+
+compute #teverwijderen=0.
+if huidig_bewoond=toegekende_inwoners & missing(nn_toegekend) #teverwijderen=1.
+SELECT IF (#teverwijderen = 0).
+EXECUTE.
+
+
+* enkele overblijvende gevallen.
+AGGREGATE 
+  /OUTFILE=* MODE=ADDVARIABLES 
+  /BREAK=NATIONAAL_NUMMER 
+  /nn_toegekend_sum2=SUM(nn_toegekend).
+if missing(nn_toegekend) & missing(nn_toegekend_sum2) nn_toegekend=1.
 
 match files
 /file=*
-/keep=eigendom_id adrescode huidig_bewoond nationaal_nummer.
+/keep=eigendom_id
+adrescode
+NATIONAAL_NUMMER
+huidig_bewoond.
+EXECUTE.
+
+
+
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=eigendom_id
+  /toegekende_inwoners=N.
 
 
 SAVE OUTFILE='C:\temp\kadaster\werkbestanden\koppeltabel_rrgezinshoofd_eigendom.sav'
   /COMPRESSED.
 
-
-SAVE TRANSLATE OUTFILE='C:\temp\kadaster\werkbestanden\koppeltabel_rrgezinshoofd_eigendom.sav'
-  /TYPE=CSV
-  /ENCODING='Locale'
-  /MAP
-  /REPLACE
-  /FIELDNAMES
-  /CELLS=VALUES.
+dataset close bevolking.
+dataset close huishoudens.
+dataset close backupkoppeling.
