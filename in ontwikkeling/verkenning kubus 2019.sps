@@ -106,12 +106,6 @@ value labels woonfunctie
 0 "geen woonfunctie"
 1 "wel een woonfunctie".
 
-* in 2019 duiken opeens een heel aantal "appartementen" op die duidelijk geen woning zijn.
-* het is niet helemaal duidelijk wat hier dan wel de functie van is, maar we nemen ze alvast niet mee als dingen met een "woonfunctie".
-* in 2018 is dit nog zeer zeldzaam, maar we nemen het toch al mee omwille van de consistentie.
-if aard = "APPARTEMENT #" & subtype_woning="" woonfunctie=0.
-
-
 * woongelegenheden.
 ** indien woonfunctie=1
 *** grootste van huishoudens en wooneenheden.
@@ -124,8 +118,6 @@ if aard = "APPARTEMENT #" & subtype_woning="" woonfunctie=0.
 
 compute woongelegenheden=$sysmis.
 if woonfunctie=1 woongelegenheden=max(wooneenheden,huidig_bewoond).
-if woonfunctie=1 & (missing(wooneenheden) | wooneenheden=0) & (missing(huidig_bewoond) | huidig_bewoond=0) woongelegenheden=1.
-if (missing(woongelegenheden) | woongelegenheden=0) & woonfunctie=1 woongelegenheden=1.
 if woonfunctie=0  woongelegenheden=huidig_bewoond.
 
 * woonvoorraad = woongelegenheden.
@@ -461,14 +453,14 @@ eigendom_id
 wooneenheden
 huidig_bewoond
 woongelegenheden
-geoitem
+stat_sector
 v2210_huishoudens
 v2210_huurders
 v2210_inwonend_eigenaarsgezin eigenaar_huurder 
 v2210_woonfunctie v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin.
 
 
-frequencies  v2210_woonfunctie eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin.
+*frequencies  v2210_woonfunctie eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin.
 
 * de-aggregatie nodig vooraleer te aggregeren: eigenaar/huurder gaat over een eigendom, maar we willen uitspraken doen over woongelegenheden.
 
@@ -536,6 +528,7 @@ AGGREGATE
 
 string geolevel (a15).
 compute geolevel="statsec".
+rename variables stat_sector=geoitem.
 RENAME VARIABLES jaartal=period.
 DATASET DECLARE kubus1.
 AGGREGATE
@@ -587,4 +580,5 @@ SAVE TRANSLATE OUTFILE='C:\temp\kadaster\upload\kubus_woongelegenheden_2019.xlsx
   /VERSION=12
   /MAP
   /FIELDNAMES VALUE=NAMES
-  /CELLS=VALUES.
+  /CELLS=VALUES
+/replace.
