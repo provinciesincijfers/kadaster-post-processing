@@ -415,8 +415,69 @@ dataset close bzl.
 
 compute v2210_hh_onbekend = bewoning_zonder_link.
 
+dataset copy werkversie.
+DATASET ACTIVATE werkversie.
 
+match files
+/file=*
+/keep=provincie
+jaartal
+capakey
+eigendom_id
+straatnaam
+KI
+inkomen
+oppervlakte
+bewoonbaar
+aard
+afdelingsnummer
+bewoner_code
+eigenaarstype
+medeeigenaars
+bouwjaar
+laatste_wijziging
+soort_bebouwing
+subtype_woning
+verdieping
+bovengrondse_verdiepingen
+wooneenheden
+huidig_bewoond
+max_bewoond
+AFGELEIDE_VARIABELEN
+LUIK1
+stat_sector
+capa5
+niscode
+LUIK2
+bewoond
+woonfunctie
+woongelegenheden
+woongelegenheden_perceel_tot
+v2210_type_woonaanbod
+eengezin_meergezin
+eigenaar_huurder
+v2210_huurders
+v2210_inwonend_eigenaarsgezin
+bouwjaar_clean
+laatste_wijziging_clean
+bouwjaar_cat
+bouwjaar_cat_wgl
+laatste_wijziging_cat
+laatste_wijziging_cat_wgl
+recentste_jaar
+LUIK3
+bewoning_zonder_link.
 
+SAVE TRANSLATE OUTFILE='C:\temp\kadaster\werkbestanden\eigendom_verrijkt_2019.sas7bdat'
+  /TYPE=SAS
+  /VERSION=9
+  /PLATFORM=WINDOWS
+  /ENCODING='Locale'
+  /MAP
+  /REPLACE.
+
+dataset activate eigendommen.
+dataset close werkversie.
 
 * LUIK 4: aggregatie naar Swing.
 compute LUIK4=$sysmis.
