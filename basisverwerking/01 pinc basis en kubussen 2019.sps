@@ -1,4 +1,4 @@
-* Encoding: windows-1252.
+* Encoding: UTF-8.
 * OPGELET: er is een harde compute period=2019 nodig vlak voor het aggregeren naar swing.
 
 GET
@@ -11,7 +11,7 @@ compute AFGELEIDE_VARIABELEN=$sysmis.
 * LUIK 1: zorg dat je kan koppelen aan statsec.
 compute LUIK1=$sysmis.
 
-
+*CDS: vind de lijn die werd toegevoegd in kader van test github desktop.
 * gewone gevallen.
 * we werken steeds op basis van de recenste tabel!.
 * 2019: gebiedsnveau is al NIEUWE niscode en NIEUWE statsec.
