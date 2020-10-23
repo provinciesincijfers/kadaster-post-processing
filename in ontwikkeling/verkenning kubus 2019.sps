@@ -417,21 +417,26 @@ compute LUIK4=$sysmis.
 * platte onderwerpen.
 
 
+* VERWERKING IN FUNCTIE VAN KUBUS.
+
 * we werken met WOONGELEGENHEDEN!
 
-* deze kunnen zonder meer overgenomen worden in een kubus.
+* en course de route hebben we al enkele variabelen gemaakt die rechtsreeks gebruikt kunnen worden als dimensieniveau.
+* we hernoemen ze hier volgens de conventies voor kubusdimensieniveaus.
 rename variables woonfunctie=v2210_woonfunctie.
 rename variables bouwjaar_cat=v2210_bouwjaar_cat.
 rename variables laatste_wijziging_cat=v2210_laatste_wijziging_cat.
 rename variables eengezin_meergezin=v2210_eengezin_meergezin.
 
-* losvaste afspraak: open/gesloten/appartement/andere gaat over "hoe iets gebouwd is", niet over effectief gebruik.
+
+
+* aangepaste dimensie nav vergadering 20201016.
 compute v2210_bouwvorm=0.
-if v2210_type_woonaanbod=1 & soort_bebouwing="Open bebouwing" v2210_bouwvorm = 1.
-if v2210_type_woonaanbod=1 & soort_bebouwing="Halfopen bebouwing" v2210_bouwvorm = 2.
-if v2210_type_woonaanbod=1 & soort_bebouwing="Gesloten bebouwing" v2210_bouwvorm = 3.
-if v2210_type_woonaanbod=2 v2210_bouwvorm = 4.
-if v2210_type_woonaanbod=3  v2210_bouwvorm = 5.
+if v2210_eengezin_meergezin=1 & soort_bebouwing="Open bebouwing" v2210_bouwvorm = 1.
+if v2210_eengezin_meergezin=1 & soort_bebouwing="Halfopen bebouwing" v2210_bouwvorm = 2.
+if v2210_eengezin_meergezin=1 & soort_bebouwing="Gesloten bebouwing" v2210_bouwvorm = 3.
+if v2210_eengezin_meergezin=2 v2210_bouwvorm = 4.
+
 
 
 * VERWIJDER WAT NIET NODIG IS.
@@ -475,6 +480,7 @@ compute tussenvar_nietbewoond=woongelegenheden-v2210_huurders-v2210_inwonend_eig
 
 * vervolgens maken we een bestand waarin we respectievelijk enkel de onbewoonde, de huurders en de eigenaars in onze uiteindelijke teleenheid steken. 
 
+* eerst de onbewoonde.
 DATASET ACTIVATE subset.
 DATASET COPY  deaggregatie.
 DATASET ACTIVATE  deaggregatie.
@@ -482,9 +488,12 @@ FILTER OFF.
 USE ALL.
 SELECT IF (tussenvar_nietbewoond > 0).
 EXECUTE.
+* in dit bestand tellen we enkel de onbewoonde.
 rename variables tussenvar_nietbewoond = kubus2210_woongelegenheden.
+* voor de onbewoonde is er uiteraard geen huurder of eigenaar.
 compute v2210_eigenaar_huurder=0.
 
+* dan de huurders.
 DATASET ACTIVATE  subset.
 DATASET COPY  temp1.
 DATASET ACTIVATE  temp1.
@@ -495,6 +504,7 @@ EXECUTE.
 rename variables v2210_huurders = kubus2210_woongelegenheden.
 compute v2210_eigenaar_huurder=2.
 
+* dan de eigenaars.
 DATASET ACTIVATE  subset.
 DATASET COPY  temp2.
 DATASET ACTIVATE  temp2.
@@ -582,3 +592,4 @@ SAVE TRANSLATE OUTFILE='C:\temp\kadaster\upload\kubus_woongelegenheden_2019.xlsx
   /FIELDNAMES VALUE=NAMES
   /CELLS=VALUES
 /replace.
+
