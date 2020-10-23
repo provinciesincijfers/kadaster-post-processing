@@ -333,10 +333,17 @@ if recentste_jaar>=2011 & recentste_jaar <= 2020 v2210_wgl_lwbj_2011_2020=woonge
 if recentste_jaar>=1983 v2210_wgl_lwbj_1983p=woongelegenheden.
 
 
-EXECUTE.
+
 ** einde bouwjaar.
 
+* bouwvorm (zie afspraken 20201016).
+if eengezin_meergezin=1 & soort_bebouwing="Open bebouwing" v2210_open = woongelegenheden.
+if eengezin_meergezin=1 & soort_bebouwing="Halfopen bebouwing" v2210_halfopen = woongelegenheden.
+if eengezin_meergezin=1 & soort_bebouwing="Gesloten bebouwing" v2210_gesloten = woongelegenheden.
+if eengezin_meergezin=1 & soort_bebouwing~="Open bebouwing" & soort_bebouwing~="Halfopen bebouwing" & soort_bebouwing~="Gesloten bebouwing" 
+v2210_egw_andere= woongelegenheden.
 
+EXECUTE.
 * EINDE LUIK 2.
 
 * LUIK3: toevoegen bewoning zonder link.
@@ -453,7 +460,11 @@ AGGREGATE
 /v2210_wgl_lwbj_1991_2000=sum(v2210_wgl_lwbj_1991_2000)
 /v2210_wgl_lwbj_2001_2010=sum(v2210_wgl_lwbj_2001_2010)
 /v2210_wgl_lwbj_2011_2020=sum(v2210_wgl_lwbj_2011_2020)
-/v2210_wgl_lwbj_1983p=sum(v2210_wgl_lwbj_1983p).
+/v2210_wgl_lwbj_1983p=sum(v2210_wgl_lwbj_1983p)
+/v2210_open=sum(v2210_open)
+/v2210_halfopen=sum(v2210_halfopen)
+/v2210_gesloten=sum(v2210_gesloten)
+/v2210_egw_andere=sum(v2210_egw_andere).
 
 
 GET
@@ -521,7 +532,11 @@ v2210_wgl_lwbj_1983_1990
 v2210_wgl_lwbj_1991_2000
 v2210_wgl_lwbj_2001_2010
 v2210_wgl_lwbj_2011_2020
-v2210_wgl_lwbj_1983p (f8.0).
+v2210_wgl_lwbj_1983p 
+v2210_open
+v2210_halfopen
+v2210_gesloten
+v2210_egw_andere (f8.0).
 
 
 * regel1: indien gebied onbekend: enkel dingen inlezen indien nodig. Alle zinloze waarden vervangen we door -99996.
@@ -538,7 +553,8 @@ v2210_wv_bj_1919_1930 v2210_wv_bj_1931_1945 v2210_wv_bj_1946_1960 v2210_wv_bj_19
 v2210_wv_bj_1971_1980 v2210_wv_bj_1981_1990 v2210_wv_bj_1991_2000 v2210_wv_bj_2001_2010
 v2210_wv_bj_2011_2020 v2210_wv_bj_onbekend v2210_wv_lw_1983_1990 v2210_wv_lw_1991_2000
 v2210_wv_lw_2001_2010 v2210_wv_lw_2011_2020 v2210_wv_lw_onbekend v2210_wgl_lwbj_1983_1990
-v2210_wgl_lwbj_1991_2000 v2210_wgl_lwbj_2001_2010 v2210_wgl_lwbj_2011_2020 v2210_wgl_lwbj_1983p
+v2210_wgl_lwbj_1991_2000 v2210_wgl_lwbj_2001_2010 v2210_wgl_lwbj_2011_2020 v2210_wgl_lwbj_1983p v2210_open
+v2210_halfopen v2210_gesloten v2210_egw_andere
 (0=-99996) (missing=-99996).
 end if.
 
@@ -553,6 +569,7 @@ v2210_wv_bj_1971_1980 v2210_wv_bj_1981_1990 v2210_wv_bj_1991_2000 v2210_wv_bj_20
 v2210_wv_bj_2011_2020 v2210_wv_bj_onbekend v2210_wv_lw_1983_1990 v2210_wv_lw_1991_2000
 v2210_wv_lw_2001_2010 v2210_wv_lw_2011_2020 v2210_wv_lw_onbekend v2210_wgl_lwbj_1983_1990
 v2210_wgl_lwbj_1991_2000 v2210_wgl_lwbj_2001_2010 v2210_wgl_lwbj_2011_2020 v2210_wgl_lwbj_1983p
+v2210_open v2210_halfopen v2210_gesloten v2210_egw_andere
 (else=-99999).
 end if.
 
@@ -567,6 +584,7 @@ v2210_wv_bj_1971_1980 v2210_wv_bj_1981_1990 v2210_wv_bj_1991_2000 v2210_wv_bj_20
 v2210_wv_bj_2011_2020 v2210_wv_bj_onbekend v2210_wv_lw_1983_1990 v2210_wv_lw_1991_2000
 v2210_wv_lw_2001_2010 v2210_wv_lw_2011_2020 v2210_wv_lw_onbekend v2210_wgl_lwbj_1983_1990
 v2210_wgl_lwbj_1991_2000 v2210_wgl_lwbj_2001_2010 v2210_wgl_lwbj_2011_2020 v2210_wgl_lwbj_1983p
+v2210_open v2210_halfopen v2210_gesloten v2210_egw_andere
 (missing=0).
 end if.
 
