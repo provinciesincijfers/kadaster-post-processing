@@ -1,5 +1,6 @@
 * Encoding: windows-1252.
 * OPGELET: er is een harde compute period=2019 nodig vlak voor het aggregeren naar swing.
+*testje
 
 GET
   FILE='C:\temp\kadaster\werkbestanden\eigendom_2019.sav'.
