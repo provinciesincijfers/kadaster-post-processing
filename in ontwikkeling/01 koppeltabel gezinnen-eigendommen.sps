@@ -258,7 +258,7 @@ match files
 compute privaat_hh=1.
 EXECUTE.
 
-
+* dit zijn onzinadressen die we toch niet kunnen koppelen.
 FILTER OFF.
 USE ALL.
 SELECT IF (ADRESCODE ~= "" & ADRESCODE ~= "000000000000" & ADRESCODE ~= "000099990000").
