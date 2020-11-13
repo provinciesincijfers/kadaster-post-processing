@@ -2,11 +2,23 @@
 * deze staat opeens in ANSI, dus:.
 SET OLang=English Unicode=No Locale=nl_BE Small=0.0001 THREADS=AUTO Printback=On BASETEXTDIRECTION=AUTOMATIC DIGITGROUPING=No TLook=None SUMMARY=None MIOUTPUT=[observed imputed] TFit=Both LEADZERO=No TABLERENDER=light.
 
+
+
+* locatie hoofdmap.
+DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
+* gaat ervan uit dat je deze mappen hebt:
+2018: met de bestanden 2018
+2019: met de bestanden 2019
+werkbestanden: voor alle sav files.
+* als bestanden voor 2020 toekomen:
+- maak een mapje 2020 met die bestanden
+- zorg dat KAD_XXXX_koppeling.txt verwijst naar meest recente jaar.
+
 PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
-  /FILE="C:\temp\kadaster\2018\KAD_2018_eigendom.txt"
+  /FILE=datamap + "2018\KAD_2018_eigendom.txt"
   /DELCASE=LINE
   /DELIMITERS="\t"
   /ARRANGEMENT=DELIMITED
@@ -51,7 +63,7 @@ SELECT IF (jaartal>0).
 EXECUTE.
 
 
-SAVE OUTFILE='C:\temp\kadaster\werkbestanden\eigendom_2018.sav'
+SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2018.sav'
   /COMPRESSED.
 
 
@@ -60,7 +72,7 @@ PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
-  /FILE="C:\temp\kadaster\2019\KAD_2019_eigendom.txt"
+  /FILE=datamap + '2019\KAD_2019_eigendom.txt'
   /DELCASE=LINE
   /DELIMITERS="\t"
   /ARRANGEMENT=DELIMITED
@@ -101,19 +113,18 @@ freq jaartal.
 
 
 
-SAVE OUTFILE='C:\temp\kadaster\werkbestanden\eigendom_2019.sav'
+SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2019.sav'
   /COMPRESSED.
 
 
 
 
-
-
+* deze steeds enkel voor het meest recente jaar.
 PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
-  /FILE="C:\temp\kadaster\2019\KAD_2019_koppeling.txt"
+  /FILE=datamap + '2019\KAD_2019_koppeling.txt'
   /ENCODING='UTF8'
   /DELCASE=LINE
   /DELIMITERS="\t"
@@ -143,7 +154,7 @@ DATASET NAME koppeling WINDOW=FRONT.
 *SELECT IF (jaartal>0).
 *EXECUTE.
 
-SAVE OUTFILE='C:\temp\kadaster\werkbestanden\koppeling_2019.sav'
+SAVE OUTFILE=datamap + 'werkbestanden\koppeling_meest_recent.sav'
   /COMPRESSED.
 
 
@@ -193,12 +204,12 @@ sort cases capa5 (a).
 
 
 
-SAVE OUTFILE='C:\temp\kadaster\werkbestanden\x_capa5_niscode.sav'
+SAVE OUTFILE=datamap + 'werkbestanden\x_capa5_niscode.sav'
   /COMPRESSED.
 
 
 
-SAVE TRANSLATE OUTFILE='C:\temp\kadaster\capa5_niscode.csv'
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\capa5_niscode.csv'
   /TYPE=CSV
   /ENCODING='UTF8'
   /MAP

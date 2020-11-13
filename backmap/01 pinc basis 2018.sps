@@ -16,7 +16,7 @@ compute LUIK1=$sysmis.
 * we werken steeds op basis van de recenste tabel!.
 * 2019: gebiedsnveau is al NIEUWE niscode en NIEUWE statsec.
 GET
-  FILE='C:\temp\kadaster\werkbestanden\koppeling_2019.sav'.
+  FILE='C:\temp\kadaster\werkbestanden\koppeling_meest_recent.sav'.
 DATASET NAME koppeling WINDOW=FRONT.
 *DATASET ACTIVATE koppeling.
 DATASET DECLARE statsec.
