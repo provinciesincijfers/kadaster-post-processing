@@ -1,5 +1,4 @@
 * Encoding: windows-1252.
-* OPGELET: er is een harde compute period=2019 nodig vlak voor het aggregeren naar swing.
 
 * map met alle kadasterdata.
 DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
@@ -9,10 +8,8 @@ DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
 DEFINE github () 'C:\github\' !ENDDEFINE.
 
 * jaartal waarvoor we werken.
-DEFINE datajaar () '2018' !ENDDEFINE.
+DEFINE datajaar () '2019' !ENDDEFINE.
 
-
-variable labels huidig_bewoond "huishoudens gekoppeld aan deze eigendom".
 
 
 GET
@@ -25,6 +22,8 @@ compute AFGELEIDE_VARIABELEN=$sysmis.
 * LUIK 1: zorg dat je kan koppelen aan statsec.
 compute LUIK1=$sysmis.
 
+
+variable labels huidig_bewoond "huishoudens gekoppeld aan deze eigendom".
 
 * gewone gevallen.
 * we werken steeds op basis van de recenste tabel!.
@@ -383,7 +382,6 @@ dataset close bzl.
 SAVE OUTFILE= datamap +  'werkbestanden\eigendom_' + datajaar + '_basisafspraken.sav'
   /COMPRESSED.
 
-
 SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\eigendom_' + datajaar + '_basisafspraken.csv'
   /TYPE=CSV
   /ENCODING='Locale'
@@ -392,3 +390,11 @@ SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\eigendom_' + datajaar + '_basisa
   /FIELDNAMES
   /CELLS=VALUES
 /replace.
+
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\eigendom_' + datajaar + '_basisafspraken.sas7bdat'
+  /TYPE=SAS
+  /VERSION=7
+  /PLATFORM=WINDOWS
+  /ENCODING='Locale'
+  /MAP
+  /REPLACE.
