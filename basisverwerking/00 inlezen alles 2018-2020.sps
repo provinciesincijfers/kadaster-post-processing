@@ -119,12 +119,61 @@ SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2019.sav'
 
 
 
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE=datamap + '2020\KAD_2020_eigendom.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  provincie A4
+  jaartal F4.0
+  capakey A17
+  eigendom_id F9.0
+  straatnaam A100
+  KI F5.0
+  inkomen A10
+  oppervlakte F5.0
+  bewoonbaar A1
+  aard A100
+  afdelingsnummer A5
+  bewoner_code A1
+  eigenaarstype A8
+  medeeigenaars A1
+  bouwjaar F4.0
+  laatste_wijziging F4.0
+  soort_bebouwing A25
+  subtype_woning A150
+  verdieping F2.0
+  bovengrondse_verdiepingen F1.0
+  wooneenheden F1.0
+  huidig_bewoond F1.0
+  max_bewoond F1.0
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME eigendom WINDOW=FRONT.
+
+freq jaartal.
+
+
+
+SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2020.sav'
+  /COMPRESSED.
+
+
 * deze steeds enkel voor het meest recente jaar.
 PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
-  /FILE=datamap + '2019\KAD_2019_koppeling.txt'
+  /FILE=datamap + '2020\KAD_2020_koppeling.txt'
   /ENCODING='UTF8'
   /DELCASE=LINE
   /DELIMITERS="\t"

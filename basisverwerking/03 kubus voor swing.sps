@@ -31,7 +31,7 @@ rename variables woonfunctie=v2210_woonfunctie.
 rename variables bouwjaar_cat=v2210_bouwjaar_cat.
 rename variables laatste_wijziging_cat=v2210_laatste_wijziging_cat.
 rename variables eengezin_meergezin=v2210_eengezin_meergezin.
-huidig_bewoond
+
 
 
 * aangepaste dimensie nav vergadering 20201016.
