@@ -1,4 +1,8 @@
 * Encoding: windows-1252.
+
+* opvolging deze taak https://github.com/provinciesincijfers/kadaster-post-processing/issues/10 . 
+
+
 * map met alle kadasterdata.
 DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
@@ -14,6 +18,9 @@ GET
 DATASET NAME eigendommen WINDOW=FRONT.
 
 * code overgenomen van https://github.com/StudiedienstAntwerpen/be-cadastre/blob/master/methode_vanaf_2016/n05_basis_percelen_sectoren.sps.
+
+
+*** deze recode nog niet helemaal in orde.
 
 recode aard
 ('D.AP.GEB.#GW'=220)
@@ -709,3 +716,45 @@ recode nature
 (551=9001)
 (552=9001)
 into detailgebruik.
+
+
+
+value labels hoofdgebruik
+1 'Wonen'
+2 'Bedrijf'
+3 'Gemengd'
+4 'Gemeenschap'
+5 'Recreatie'
+6 'Groen'
+7 'Land- en Tuinbouw'
+8 'Infrastructuur'
+9 'Andere'.
+
+value labels detailgebruik
+1001 'Eengezinswoning'
+1002 'Meergezinsgebouw'
+1003 'Bouwgrond'
+2001 'Commercieel gebouw'
+2002 'Kantoorgebouw'
+2003 'Industriegebouw'
+2004 'Opslaggebouw'
+2005 'Industriegrond'
+3001 'Woon- en commercieel gebouw'
+4001 'Onderwijs'
+4002 'Zorg'
+4003 'Openbaar gebouw'
+4004 'Eredienst'
+4005 'Monument'
+4006 'Nutsvoorziening'
+5001 'Sport'
+5002 'Cultuur'
+5003 'Jeugd'
+5004 'Vakantie'
+6001 'Bos'
+6002 'Park'
+6003 'Woeste grond'
+7001 'Land- en Tuinbouw'
+8001 'Gekadastreerde weg'
+8002 'Gekadastreerd water'
+8003 'Parking'
+9001 'Andere'.
