@@ -9,7 +9,7 @@ DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
 DEFINE github () 'C:\github\' !ENDDEFINE.
 
 * jaartal waarvoor we werken.
-DEFINE datajaar () '2018' !ENDDEFINE.
+DEFINE datajaar () '2020' !ENDDEFINE.
 
 
 GET
@@ -65,7 +65,7 @@ woongelegenheden
 stat_sector
 hurende_huishoudens
 inwonend_eigenaarsgezin eigenaar_huurder 
-v2210_woonfunctie v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin.
+v2210_woonfunctie v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin ki inkomen.
 
 
 *frequencies  v2210_woonfunctie eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin.
@@ -137,8 +137,8 @@ AGGREGATE
 
 
 
-
-
+* KUBUS WOONGELEGENHEDEN.
+* verwerking op statsec.
 string geolevel (a15).
 compute geolevel="statsec".
 rename variables stat_sector=geoitem.
@@ -148,6 +148,8 @@ AGGREGATE
   /OUTFILE='kubus1'
   /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin
   /kubus2210_woongelegenheden=SUM(kubus2210_woongelegenheden).
+
+* we voegen ook een verwerking op gemeenteniveau toe - strikt gezien niet nodig, maar helpt Swing vlotter werken.
 DATASET ACTIVATE kubus1.
 dataset copy gemeente.
 dataset activate gemeente.
@@ -184,7 +186,6 @@ EXECUTE.
 
 dataset close gemeente.
 dataset close kubus2.
-dataset close deaggregatie.
 dataset close subset.
 
 
@@ -195,4 +196,81 @@ SAVE TRANSLATE OUTFILE=datamap + 'upload\kubus_woongelegenheden_' + datajaar + '
   /FIELDNAMES VALUE=NAMES
   /CELLS=VALUES
 /replace.
+
+
+
+
+* KUBUS KADASTRAAL INKOMEN.
+dataset activate deaggregatie.
+dataset close kubus1.
+* KI voorbereiding.
+string v2210_ki_bebouwd (a1).
+compute v2210_ki_bebouwd=inkomen.
+string v2210_ki_belast (a1).
+compute v2210_ki_belast=CHAR.SUBSTR(inkomen,2,1).
+compute kubus2210_ki=ki/woongelegenheden*kubus2210_woongelegenheden.
+
+recode  v2210_ki_bebouwd ("2"="1") (else="0").
+recode  v2210_ki_belast ("F"="1") (else="0").
+EXECUTE.
+
+
+* verwerking op statsec.
+DATASET DECLARE kubus1.
+AGGREGATE
+  /OUTFILE='kubus1'
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin 
+v2210_ki_bebouwd v2210_ki_belast
+  /kubus2210_ki=SUM(kubus2210_ki).
+
+* we voegen ook een verwerking op gemeenteniveau toe - strikt gezien niet nodig, maar helpt Swing vlotter werken.
+DATASET ACTIVATE kubus1.
+dataset copy gemeente.
+dataset activate gemeente.
+alter type geoitem (a5).
+recode geoitem ('12030'='12041')
+('12034'='12041')
+('44011'='44083')
+('44049'='44083')
+('44001'='44084')
+('44029'='44084')
+('44036'='44085')
+('44072'='44085')
+('44080'='44085')
+('45017'='45068')
+('45057'='45068')
+('71047'='72042')
+('72040'='72042')
+('72025'='72043')
+('72029'='72043').
+alter type geoitem (a9).
+compute geolevel="gemeente".
+DATASET DECLARE kubus2.
+AGGREGATE
+  /OUTFILE='kubus2'
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin
+  v2210_ki_bebouwd v2210_ki_belast
+  /kubus2210_ki=SUM(kubus2210_ki).
+
+
+
+DATASET ACTIVATE kubus1.
+ADD FILES /FILE=*
+  /FILE='kubus2'.
+EXECUTE.
+
+dataset close gemeente.
+dataset close kubus2.
+dataset close deaggregatie.
+dataset close subset.
+
+
+SAVE TRANSLATE OUTFILE=datamap + 'upload\kubus_ki_' + datajaar + '.xlsx'
+  /TYPE=XLS
+  /VERSION=12
+  /MAP
+  /FIELDNAMES VALUE=NAMES
+  /CELLS=VALUES
+/replace.
+
 
