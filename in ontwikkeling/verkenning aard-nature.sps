@@ -20,6 +20,13 @@ DATASET NAME eigendommen WINDOW=FRONT.
 * code overgenomen van https://github.com/StudiedienstAntwerpen/be-cadastre/blob/master/methode_vanaf_2016/n05_basis_percelen_sectoren.sps.
 
 
+* kapoote rij verwijderen; bewoning zonder link verwijderen. 
+FILTER OFF.
+USE ALL.
+SELECT IF (capakey~="" & capakey~="capakey").
+EXECUTE.
+
+
 *** deze recode nog niet helemaal in orde.
 
 recode aard
@@ -758,3 +765,583 @@ value labels detailgebruik
 8002 'Gekadastreerd water'
 8003 'Parking'
 9001 'Andere'.
+
+* EINDE INDELING VREIDI.
+
+
+* NIS-indeling.
+
+recode nature (166=1)
+(222=1)
+(220=1)
+(165=1)
+(221=1)
+(164=1)
+(205=2)
+(203=2)
+(242=2)
+(244=2)
+(204=2)
+(240=2)
+(200=2)
+(223=2)
+(243=2)
+(202=2)
+(247=2)
+(206=2)
+(201=2)
+(241=2)
+(246=2)
+(245=2)
+(351=3)
+(281=3)
+(324=3)
+(286=3)
+(321=3)
+(346=3)
+(356=3)
+(343=3)
+(287=3)
+(379=3)
+(260=3)
+(353=3)
+(344=3)
+(261=3)
+(354=3)
+(355=3)
+(306=3)
+(349=3)
+(341=3)
+(348=3)
+(342=3)
+(300=3)
+(380=3)
+(285=3)
+(352=3)
+(302=3)
+(289=3)
+(381=3)
+(340=3)
+(303=3)
+(357=3)
+(305=3)
+(345=3)
+(350=3)
+(376=3)
+(347=3)
+(263=3)
+(377=3)
+(283=3)
+(262=3)
+(304=3)
+(320=3)
+(288=3)
+(301=3)
+(284=3)
+(323=3)
+(282=3)
+(290=3)
+(264=3)
+(265=3)
+(322=3)
+(280=3)
+(370=4)
+(371=4)
+(400=5)
+(401=5)
+(402=5)
+(415=6)
+(403=6)
+(409=6)
+(408=6)
+(407=6)
+(404=6)
+(414=6)
+(412=6)
+(410=6)
+(405=6)
+(411=6)
+(413=6)
+(434=7)
+(531=7)
+(500=7)
+(442=7)
+(463=7)
+(508=7)
+(485=7)
+(375=7)
+(509=7)
+(372=7)
+(406=7)
+(374=7)
+(489=7)
+(420=7)
+(426=7)
+(423=7)
+(425=7)
+(421=7)
+(524=7)
+(504=7)
+(422=7)
+(481=7)
+(523=7)
+(480=7)
+(441=7)
+(482=7)
+(507=7)
+(445=7)
+(433=7)
+(432=7)
+(427=7)
+(525=7)
+(487=7)
+(462=7)
+(521=7)
+(378=7)
+(483=7)
+(522=7)
+(520=7)
+(373=7)
+(443=7)
+(460=7)
+(484=7)
+(506=7)
+(501=7)
+(428=7)
+(424=7)
+(486=7)
+(430=7)
+(431=7)
+(488=7)
+(505=7)
+(461=7)
+(502=7)
+(503=7)
+(444=7)
+(429=7)
+(527=7)
+(528=7)
+(529=7)
+(440=7)
+(446=7)
+(526=7)
+(530=7)
+(41=8)
+(76=8)
+(67=8)
+(69=8)
+(68=8)
+(10=8)
+(11=8)
+(13=8)
+(9=8)
+(78=8)
+(1=8)
+(79=8)
+(44=8)
+(28=8)
+(36=8)
+(3=8)
+(52=8)
+(21=8)
+(59=8)
+(74=8)
+(77=8)
+(27=8)
+(73=8)
+(38=8)
+(50=8)
+(17=8)
+(71=8)
+(34=8)
+(25=8)
+(29=8)
+(20=8)
+(55=8)
+(18=8)
+(46=8)
+(4=8)
+(26=8)
+(72=8)
+(43=8)
+(5=8)
+(33=8)
+(2=8)
+(51=8)
+(35=8)
+(382=9)
+(70=9)
+(80=9)
+(510=9)
+ into NIS_hoofdgroep.
+value labels nis_hoofdgroep
+1 '1. Appartementen en buildings'
+2 '2. Huizen en hoeven en bijgebouwen'
+3 '3. Industriele gebouwen'
+4 '4. Opslaggebouwen'
+5 '5. Kantoorgebouwen'
+6 '6. Commerciele gebouwen'
+7 '7. Andere'
+8 'Onbebouwde percelen'
+9 'Andere'.
+
+recode nature
+(220=1)
+(221=1)
+(415=2)
+(409=2)
+(408=2)
+(407=2)
+(414=2)
+(412=2)
+(410=2)
+(411=2)
+(413=2)
+(351=3)
+(281=3)
+(324=3)
+(286=3)
+(321=3)
+(346=3)
+(356=3)
+(343=3)
+(287=3)
+(379=3)
+(260=3)
+(353=3)
+(344=3)
+(261=3)
+(354=3)
+(355=3)
+(306=3)
+(349=3)
+(341=3)
+(348=3)
+(342=3)
+(300=3)
+(380=3)
+(285=3)
+(352=3)
+(302=3)
+(289=3)
+(381=3)
+(340=3)
+(303=3)
+(357=3)
+(305=3)
+(345=3)
+(350=3)
+(376=3)
+(347=3)
+(263=3)
+(377=3)
+(283=3)
+(262=3)
+(304=3)
+(320=3)
+(288=3)
+(301=3)
+(284=3)
+(323=3)
+(282=3)
+(290=3)
+(264=3)
+(265=3)
+(322=3)
+(280=3)
+(79=4)
+(74=4)
+(77=4)
+(73=4)
+(521=4)
+(71=4)
+(72=4)
+(400=5)
+(401=5)
+(402=5)
+(205=6)
+(203=6)
+(204=6)
+(206=6)
+(10=7)
+(11=7)
+(9=8)
+(1=9)
+(78=10)
+(222=11)
+(485=12)
+(489=12)
+(481=12)
+(480=12)
+(482=12)
+(487=12)
+(483=12)
+(484=12)
+(486=12)
+(488=12)
+(166=13)
+(165=13)
+(164=13)
+(76=14)
+(28=14)
+(59=14)
+(27=14)
+(25=14)
+(29=14)
+(26=14)
+(34=15)
+(33=15)
+(3=16)
+(403=17)
+(404=17)
+(405=17)
+(240=18)
+(200=18)
+(223=18)
+(202=18)
+(201=18)
+(242=19)
+(244=19)
+(243=19)
+(247=19)
+(241=19)
+(246=19)
+(524=20)
+(523=20)
+(525=20)
+(527=20)
+(526=20)
+(52=21)
+(50=21)
+(55=21)
+(51=21)
+(531=22)
+(375=22)
+(372=22)
+(374=22)
+(432=22)
+(373=22)
+(428=22)
+(430=22)
+(431=22)
+(429=22)
+(528=22)
+(529=22)
+(530=22)
+(463=23)
+(462=23)
+(378=23)
+(460=23)
+(461=23)
+(434=24)
+(420=24)
+(426=24)
+(423=24)
+(425=24)
+(421=24)
+(422=24)
+(427=24)
+(424=24)
+(370=25)
+(371=25)
+(17=26)
+(520=27)
+(500=28)
+(508=28)
+(509=28)
+(406=28)
+(504=28)
+(21=28)
+(507=28)
+(522=28)
+(20=28)
+(506=28)
+(501=28)
+(18=28)
+(505=28)
+(502=28)
+(503=28)
+(245=29)
+(442=30)
+(441=30)
+(445=30)
+(433=30)
+(443=30)
+(444=30)
+(440=30)
+(446=30)
+(67=31)
+(69=31)
+(68=31)
+(4=32)
+(13=33)
+(5=33)
+(2=34)
+(41=35)
+(44=35)
+(36=35)
+(38=35)
+(46=35)
+(43=35)
+(35=35)
+(382=36)
+(70=36)
+(80=36)
+(510=36)
+ into NIS_rubriek.
+
+value labels nis_rubriek
+1 'Afzonderlijke appartementen (met KI, zonder oppervlakte)'
+2 'Allerlei handelsinrichtingen'
+3 'Ambachts- en industriegebouwen'
+4 'Andere'
+5 'Banken, kantoren'
+6 'Bijgebouwen'
+7 'Boomgaard'
+8 'Bos'
+9 'Bouwland'
+10 'Bouwpercelen'
+11 'Building'
+12 'Eredienst'
+13 'Fictieve percelen appartementsgebouw (zonder KI, met oppervlakte)'
+14 'Gekadastreerde wateren'
+15 'Gekadastreerde wegen'
+16 'Hooiland'
+17 'Horeca'
+18 'Huis, hoeve'
+19 'Landelijke bijgebouwen'
+20 'Monumenten'
+21 'Nijverheidsgronden'
+22 'Nutsvoorzieningen'
+23 'Onderwijs, onderzoek en cultuur'
+24 'Openbare gebouwen'
+25 'Opslagruimte'
+26 'Park'
+27 'Puin'
+28 'Recreatie, sport'
+29 'Serre'
+30 'Sociale Zorg en ziekenzorg'
+31 'Splitsing voor grond en gebouw'
+32 'Tuin'
+33 'Tuinbouwgronden'
+34 'Weiland'
+35 'Woeste gronden'
+36 'niet toegewezen'.
+
+*aanmaken dummy's.
+
+* OPMERKINGEN:
+* er zijn wel wat percelen met meerdere "functies".
+* maar in bijna alle gevallen is er een "functie" die je kan negeren, bijvoorbeeld "grond".
+* als je op  PERCEELNIVEAU iets zinvol wil zeggen: sorteer de perceeldelen zo dat de eerste functie wellicht de meest zinvolle is, die nemen we dan mee in de aggregatie, door iets als functie_nis=first(fuctie_nis).
+
+if NIS_hoofdgroep =1 nis_app_building=1.
+if NIS_hoofdgroep =2 nis_huis_hoeve=1.
+if NIS_hoofdgroep =3 nis_industrie=1.
+if NIS_hoofdgroep =4 nis_opslag=1.
+if NIS_hoofdgroep =5 nis_kantoor=1.
+if NIS_hoofdgroep =6 nis_commercieel=1.
+if NIS_hoofdgroep =7 nis_ander=1.
+if NIS_hoofdgroep =8 nis_onbebouwd=1.
+if NIS_hoofdgroep =8 nis_niettoegekend=1.
+
+
+string aard_all (a300).
+sort cases capakey (a) aard (a).
+if $casenum=1 | capakey~=lag(capakey) aard_all=ltrim(rtrim(aard)).
+if capakey=lag(capakey) & aard=lag(aard) aard_all=ltrim(rtrim(lag(aard))).
+if capakey=lag(capakey) & aard~=lag(aard) aard_all=concat(ltrim(rtrim(lag(aard_all))),",",ltrim(rtrim(aard))).
+EXECUTE.
+DATASET DECLARE aardall.
+AGGREGATE
+  /OUTFILE='aardall'
+  /BREAK=capakey
+  /aard_all=LAST(aard_all)
+  /N_BREAK=N.
+
+string bouwjaar_str (a4).
+compute bouwjaar_str=string(bouwjaar_clean,F4.0).
+string bouwjaar_str_all (a100).
+sort cases capakey (a) bouwjaar_str (a).
+if $casenum=1 | capakey~=lag(capakey) bouwjaar_str_all=ltrim(rtrim(bouwjaar_str)).
+if capakey=lag(capakey) & bouwjaar_str=lag(bouwjaar_str) bouwjaar_str_all=ltrim(rtrim(lag(bouwjaar_str))).
+if capakey=lag(capakey) & bouwjaar_str~=lag(bouwjaar_str) bouwjaar_str_all=concat(ltrim(rtrim(lag(bouwjaar_str_all))),",",ltrim(rtrim(bouwjaar_str))).
+DATASET DECLARE bouwjaar_strall.
+AGGREGATE
+  /OUTFILE='bouwjaar_strall'
+  /BREAK=capakey
+  /bouwjaar_str_all=LAST(bouwjaar_str_all)
+  /N_BREAK=N.
+
+
+AGGREGATE
+  /OUTFILE=* MODE=ADDVARIABLES
+  /BREAK=capakey
+  /verdieping_max=MAX(verdieping) 
+  /bovengrondse_verdiepingen_max=MAX(bovengrondse_verdiepingen).
+compute max_verdiep=max(verdieping_max,bovengrondse_verdiepingen_max).
+
+
+
+
+
+* aggregatie.
+DATASET DECLARE perceelverkenning.
+AGGREGATE
+  /OUTFILE='perceelverkenning'
+  /BREAK=capakey jaartal stat_sector niscode
+  /KI_sum=SUM(KI) 
+  /oppervlakte_sum=SUM(oppervlakte) 
+  /woongelegenheden_sum=SUM(woongelegenheden) 
+  /huidig_bewoond_sum=SUM(huidig_bewoond) 
+  /nis_app_building_max=MAX(nis_app_building) 
+  /nis_huis_hoeve_max=MAX(nis_huis_hoeve) 
+  /nis_industrie_max=MAX(nis_industrie) 
+  /nis_opslag_max=MAX(nis_opslag) 
+  /nis_kantoor_max=MAX(nis_kantoor) 
+  /nis_commercieel_max=MAX(nis_commercieel) 
+  /nis_ander_max=MAX(nis_ander) 
+  /nis_onbebouwd_max=MAX(nis_onbebouwd) 
+  /nis_niettoegekend_max=MAX(nis_niettoegekend) 
+  /NIS_hoofdgroep_first=FIRST(NIS_hoofdgroep) 
+  /NIS_rubriek_first=FIRST(NIS_rubriek) 
+  /nature_first=FIRST(nature) 
+  /aard_first=FIRST(aard) 
+  /egw_open_bouwvorm_sum=SUM(egw_open_bouwvorm) 
+  /egw_halfopen_bouwvorm_sum=SUM(egw_halfopen_bouwvorm) 
+  /egw_gesloten_bouwvorm_sum=SUM(egw_gesloten_bouwvorm) 
+  /egw_andere_bouwvorm_sum=SUM(egw_andere_bouwvorm) 
+  /bouwjaar_clean_max=MAX(bouwjaar_clean) 
+  /laatste_wijziging_clean_mean=MEAN(laatste_wijziging_clean)
+  /max_verdiep=sum(max_verdiep)
+  /N_BREAK=N.
+
+dataset activate aardall.
+delete variables n_break.
+DATASET ACTIVATE perceelverkenning.
+MATCH FILES /FILE=*
+  /TABLE='aardall'
+  /BY capakey.
+EXECUTE.
+dataset close aardall.
+
+dataset activate bouwjaar_strall.
+delete variables n_break.
+DATASET ACTIVATE perceelverkenning.
+MATCH FILES /FILE=*
+  /TABLE='bouwjaar_strall'
+  /BY capakey.
+EXECUTE.
+dataset close bouwjaar_strall.
+
+
+* wegschrijven naar csv.
+
+
+SAVE TRANSLATE OUTFILE='C:\temp\kadaster\werkbestanden\perceel_aard_2020.csv'
+  /TYPE=CSV
+  /ENCODING='Locale'
+  /MAP
+  /REPLACE
+  /FIELDNAMES
+  /CELLS=VALUES.
