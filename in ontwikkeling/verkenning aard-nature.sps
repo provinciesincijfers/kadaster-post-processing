@@ -20,7 +20,7 @@ DATASET NAME eigendommen WINDOW=FRONT.
 * code overgenomen van https://github.com/StudiedienstAntwerpen/be-cadastre/blob/master/methode_vanaf_2016/n05_basis_percelen_sectoren.sps.
 
 
-* kapoote rij verwijderen; bewoning zonder link verwijderen. 
+* kapotte rij verwijderen; bewoning zonder link verwijderen. 
 FILTER OFF.
 USE ALL.
 SELECT IF (capakey~="" & capakey~="capakey").
@@ -28,7 +28,9 @@ EXECUTE.
 
 
 *** deze recode nog niet helemaal in orde.
+*** recode aard is wel in orde. 
 
+*D.AP.GEB.#GW' en 'D.AP.GEB.#W' zijn beide afgeleid van 'PRIVATIEF DEEL#'.
 recode aard
 ('D.AP.GEB.#GW'=220)
 ('D.AP.GEB.#W'=220)
@@ -271,7 +273,9 @@ recode aard
 
 
 
-* indeling Vreidi.
+* indeling Vreidi. (@Joost: wat betekent dit?)
+***let op hoofdgebruik is niet hetzelfde als hoofdgroep (zie verder)
+
 recode nature
 (220=1)
 (200=1)
@@ -770,8 +774,10 @@ value labels detailgebruik
 
 
 * NIS-indeling.
+*** Deze is nog onvolledig
 
-recode nature (166=1)
+recode nature 
+(166=1)
 (222=1)
 (220=1)
 (165=1)
