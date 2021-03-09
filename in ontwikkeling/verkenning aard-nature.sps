@@ -271,6 +271,296 @@ recode aard
 ('BOOMGAARD HOOG'=10)
 ('BOUWLAND'=1) into nature.
 
+*indeling statbel (obv data2020) naar rubrieken. (KB09032021) - nog niet helemaal volledig.
+
+recode nature
+(1=1AE)
+(2=1BC)
+(3=1BC)
+(4=1DI)
+(5=1AE)
+(6=1BC)
+(7=1BC)
+(8=1H)
+(9=1G)
+(10=1F)
+(11=1F)
+(13=1AE)
+(14=1AE)
+(17=1DI)
+(18=1J)
+(20=1J)
+(21=1J)
+(22=1J)
+(24=1K)
+(25=1K)
+(26=1K)
+(27=1K)
+(28=1K)
+(29=1K)
+(30=1K)
+(33=1L)
+(34=1L)
+(35=1H)
+(36=1H)
+(38=1H)
+(39=1H)
+(41=1H)
+(42=1H)
+(43=1H)
+(44=1H)
+(45=1H)
+(50=1MNOP)
+(51=1MNOP)
+(52=1MNOP)
+(54=1MNOP)
+(55=1MNOP)
+(56=1MNOP)
+(57=1MNOP)
+(59=1K)
+(63=1MNOP)
+(67=1MNOP)
+(68=1MNOP)
+(69=1MNOP)
+(70=1MNOP)
+(71=1MNOP)
+(72=1MNOP)
+(73=1MNOP)
+(74=1MNOP)
+(75=1MNOP)
+(76=1K)
+(77=1MNOP)
+(78=1MNOP)
+(79=1MNOP)
+(164=2A1A2)
+(200=2C)
+(201=2C)
+(202=2C)
+(203=2DEF)
+(204=2DEF)
+(205=2DEF)
+(206=2DEF)
+(222=2B)
+(223=2C)
+(240=2C)
+(241=2DEF)
+(242=2DEF)
+(243=2DEF)
+(244=2DEF)
+(245=2DEF)
+(246=2DEF)
+(247=2DEF)
+(260=2G)
+(261=2G)
+(262=2G)
+(263=2G)
+(264=2G)
+(265=2G)
+(280=2G)
+(281=2G)
+(282=2G)
+(283=2G)
+(284=2G)
+(285=2G)
+(286=2G)
+(287=2G)
+(288=2G)
+(289=2G)
+(290=2G)
+(300=2G)
+(301=2G)
+(302=2G)
+(303=2G)
+(304=2G)
+(305=2G)
+(306=2G)
+(320=2G)
+(321=2G)
+(322=2G)
+(323=2G)
+(324=2G)
+(340=2G)
+(341=2G)
+(342=2G)
+(343=2G)
+(344=2G)
+(345=2G)
+(346=2G)
+(347=2G)
+(348=2G)
+(349=2G)
+(350=2G)
+(351=2G)
+(352=2G)
+(353=2G)
+(354=2G)
+(355=2G)
+(356=2G)
+(357=2G)
+(370=2H)
+(371=2H)
+(372=2M)
+(373=2M)
+(374=2M)
+(375=2M)
+(376=2G)
+(377=2G)
+(378=2O)
+(379=2G)
+(380=2G)
+(381=2G)
+(382=2G)
+(400=2I)
+(401=2I)
+(402=2I)
+(403=2JK)
+(404=2JK)
+(405=2JK)
+(406=2Q)
+(407=2JK)
+(408=2JK)
+(409=2JK)
+(410=2JK)
+(411=2JK)
+(412=2JK)
+(413=2JK)
+(414=2JK)
+(415=2JK)
+(420=2L)
+(421=2L)
+(422=2L)
+(423=2L)
+(424=2L)
+(425=2L)
+(426=2L)
+(427=2L)
+(428=2M)
+(429=2M)
+(430=2M)
+(431=2M)
+(432=2M)
+(433=2N)
+(434=2L)
+(440=2N)
+(441=2N)
+(442=2N)
+(443=2N)
+(444=2N)
+(445=2N)
+(446=2N)
+(460=2O)
+(461=2O)
+(462=2O)
+(463=2O)
+(480=2P)
+(481=2P)
+(482=2P)
+(483=2P)
+(484=2P)
+(485=2P)
+(486=2P)
+(487=2P)
+(488=2P)
+(489=2P)
+(500=2Q)
+(501=2Q)
+(502=2Q)
+(503=2Q)
+(504=2Q)
+(505=2Q)
+(506=2Q)
+(507=2Q)
+(508=2Q)
+(509=2Q)
+(510=2Q)
+(520=2RST)
+(521=2RST)
+(522=2Q)
+(523=2RST)
+(524=2RST)
+(525=2RST)
+(526=2RST)
+(527=2RST)
+(528=2M)
+(529=2M)
+(530=2M)
+(531=2M)
+(539=2RST)
+(540=1MNOP)
+(541=1MNOP) into rubriek2.
+
+value labels rubriek2
+1AE 'akkerland, niet elders genoemd  (1AE)'
+1BC 'grasland  (1BC)'
+1DI 'tuinen en parken  (1DI)'
+1F 'boomgaarden  (1F)'
+1G 'bos  (1G)'
+1H 'woeste gronden  (1H)'
+1J 'recreatie, sport  (1J)'
+1K 'gekadastreerde waters  (1K)'
+1L 'gekadastreerde wegen  (1L)'
+1MNOP 'andere  (1MNOP)'
+2A1A2 'appartementen  (2A1A2)'
+2B 'building  (2B)'
+2C 'huis, hoeve  (2C)'
+2DEF 'bijgebouwen met inbegrip van serres  (2DEF)'
+2G 'ambacht - en industriegebouwen  (2G)'
+2H 'opslagruimte  (2H)'
+2I 'banken,kantoren  (2I)'
+2JK 'gebouwen met handelsbestemming  (2JK)'
+2L 'openbare gebouwen  (2L)'
+2M 'nutsvoorzieningen  (2M)'
+2N 'sociale en ziekenzorg  (2N)'
+2O 'onderwijs, onderzoek en cultuur  (2O)'
+2P 'eredienst  (2P)'
+2Q 'recreatie, sport  (2Q)'
+2RST 'andere  (2RST)'.
+
+recode rubriek2
+(1AE=1TOT)
+(1BC=1TOT)
+(1DI=1TOT)
+(1F=1TOT)
+(1G=1TOT)
+(1H=1TOT)
+(1J=1TOT)
+(1K=1TOT)
+(1L=1TOT)
+(1MNOP=1TOT)
+(2A1A2=2TOT)
+(2B=2TOT)
+(2C=2TOT)
+(2DEF=2TOT)
+(2G=2TOT)
+(2H=2TOT)
+(2I=2TOT)
+(2JK=2TOT)
+(2L=2TOT)
+(2M=2TOT)
+(2N=2TOT)
+(2O=2TOT)
+(2P=2TOT)
+(2Q=2TOT)
+(2RST=2TOT) into rubriek1
+
+value labels rubriek1
+1TOT 'totaal onbebouwde percelen (1TOT)'
+2TOT 'totaal bebouwde percelen (2TOT)'.
+
+
+** in bovenstaande indeling ontbreken nog 37 verschillende types 'aard' - nog aan het uitzoeken.
+
+*Verdere indelingen:
+*3TOT: niet genormaliseerde percelen: waar nog geen gestandaardiseerde kadastrale aard werd toegewezen, sinds 2010 zijn er geen meer
+*4TOT: gekadastreerde oppervlakte: 4TOT=2TOT+1TOT
+*5TOT: niet-gekadastreerde oppervlakte: oppervlakte die niet in percelen is ingedeeld. Geen kadastrale aard toegewezen. 
+*Berekening 5TOT: totaal onveranderlijke totale oppervlakte (=6TOT?) van de administratieve eenheid verminderen met de gekadastreerde oppervlakte (4TOT).
+*6TOT: totale oppervlakte.
+
+*Deze indeling is hieronder nog niet verder uitgewerkt.
+*EINDE INDELING STATBEL.
+
+
 
 
 * indeling Vreidi. (@Joost: wat betekent dit?)
@@ -1351,3 +1641,4 @@ SAVE TRANSLATE OUTFILE='C:\temp\kadaster\werkbestanden\perceel_aard_2020.csv'
   /REPLACE
   /FIELDNAMES
   /CELLS=VALUES.
+
