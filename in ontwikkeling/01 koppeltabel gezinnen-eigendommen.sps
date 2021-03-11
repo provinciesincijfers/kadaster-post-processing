@@ -35,6 +35,7 @@ EXECUTE.
 match files
 /file=*
 /keep=eigendom_id huidig_bewoond.
+EXECUTE.
 sort cases eigendom_id (a).
 
 
@@ -110,13 +111,12 @@ EXECUTE.
 DATASET NAME crabrr WINDOW=FRONT.
 delete variables provincie jaartal.
 
-DATASET ACTIVATE crabrr.
 AGGREGATE
   /OUTFILE=* MODE=ADDVARIABLES
   /BREAK=adrescode
   /teller_adrescode=N.
 
-DATASET ACTIVATE crabrr.
+
 DATASET DECLARE telcrab.
 AGGREGATE
   /OUTFILE='telcrab'
@@ -191,7 +191,7 @@ EXECUTE.
 recode matchsequence (0=1).
 SORT CASES BY straatnaamcode(A) huisbis(A) matchsequence (a).
 
-
+* volgnummer maken in crab-rr koppeltabel.
 DATASET ACTIVATE crabrr.
 SORT CASES BY straatnaamcode(A) huisbis(A).
 MATCH FILES
@@ -306,17 +306,19 @@ GET file 'C:\temp\kadaster\werkbestanden\temp\manyrow.sav'.
 DATASET NAME ontdubbeld WINDOW=FRONT.
 SELECT IF (id <= huishoudens). 
 EXECUTE.
+dataset close teontdubbelen.
 
 DATASET ACTIVATE eigadres.
 SELECT IF (huishoudens =1).
 compute id=1.
+EXECUTE.
 
 DATASET ACTIVATE eigadres.
 ADD FILES /FILE=*
   /FILE='ontdubbeld'.
 EXECUTE.
 dataset close ontdubbeld.
-dataset close teontdubbelen.
+
 
 
 
@@ -324,6 +326,29 @@ dataset close teontdubbelen.
 
 
 DATASET ACTIVATE huishoudens.
+* Identify Duplicate Cases.
+SORT CASES BY ADRESCODE(A).
+MATCH FILES
+  /FILE=*
+  /BY ADRESCODE
+  /FIRST=PrimaryFirst
+  /LAST=PrimaryLast.
+DO IF (PrimaryFirst).
+COMPUTE  MatchSequence=1-PrimaryLast.
+ELSE.
+COMPUTE  MatchSequence=MatchSequence+1.
+END IF.
+LEAVE  MatchSequence.
+FORMATS  MatchSequence (f7).
+MATCH FILES
+  /FILE=*
+  /DROP=PrimaryFirst PrimaryLast.
+VARIABLE LABELS  MatchSequence 'Sequential count of matching cases'.
+VARIABLE LEVEL  MatchSequence (SCALE).
+EXECUTE.
+recode matchsequence (0=1).
+rename variables matchsequence=id.
+
 sort cases adrescode (a) id (a).
 dataset activate eigadres.
 sort cases adrescode (a) id (a).
@@ -332,8 +357,16 @@ MATCH FILES /FILE=*
   /BY adrescode id.
 EXECUTE.
 
-dataset name eigadres.
+
+
+SAVE OUTFILE='C:\temp\kadaster\werkbestanden\alle_potentiele_koppelingen_gezinshoofd_eigendom.sav'
+  /COMPRESSED.
+
+
 dataset copy backupkoppeling.
+
+
+* HIER OPSLAAN.
 
 
 DATASET ACTIVATE eigadres.
@@ -363,6 +396,10 @@ EXECUTE.
 
 if matchsequence_1=0 nn_toegekend=1.
 sort cases eigendom_id (a).
+
+* we hebben mensen een willekeurig volgnummer gegeven (id) en daarop gekoppeld in dit proces.
+* we hebben hier geteld de hoeveelste keer een mens voorkomt.
+* iedereen kan maar één keer voorkomen als "is de Nde keer deze mens en is de Nde keer dit volgnummer".
 do if (eigendom_id~=lag(eigendom_id) | (eigendom_id=lag(eigendom_id) & adrescode=lag(adrescode))).
 if id=matchsequence_1 nn_toegekend=1.
 end if.
@@ -384,7 +421,9 @@ AGGREGATE
   /BREAK=eigendom_id
   /toegekende_inwoners=sum(nn_toegekend).
 
-
+* indien iemand nog toegekend moet worden, maar potentieel in een eigendom toegekend zou worden
+die al 'vol zit', gooi die er dan uit.
+* OPMERKING: in enkele gevallen hebben we nu al "overbewoning geintroduceerd", en het is mogelijk dat we nu enkele mensen onterecht weggooien.
 compute #teverwijderen=0.
 if huidig_bewoond<=toegekende_inwoners & missing(nn_toegekend) #teverwijderen=1.
 SELECT IF (#teverwijderen = 0).
@@ -420,10 +459,12 @@ EXECUTE.
 sort cases eigendom_id (a) nn_toegekend (a).
 if eigendom_id~=lag(eigendom_id) nn_toeken2=toegekende_inwoners.
 EXECUTE.
+* als je toevallig de eerste keer voorkomt in een eigendom waar nog plaats is, ken dan toe en verhoog de toe-ken-teller.
 do if eigendom_id~=lag(eigendom_id) & primaryfirst = 1 & missing(nn_toegekend) & nn_toeken2<huidig_bewoond.
 compute nn_toegekend=1.
 compute nn_toeken2=nn_toeken2+1.
 end if.
+* bij de verdere rijen van de eigendommen kijken we opnieuw naar mensen die op die rij voor het eerst voorkomen.
 do if eigendom_id=lag(eigendom_id) & primaryfirst = 1 & missing(nn_toegekend) & lag(nn_toeken2)<huidig_bewoond.
 compute nn_toegekend=1.
 compute nn_toeken2=lag(nn_toeken2)+1.
@@ -435,7 +476,7 @@ PrimaryLast
 MatchSequence
 InDupGrp.
 
-
+* opnieuw controleren wie reeds toegekend is.
 delete variables nn_toegekend_max.
 AGGREGATE
   /OUTFILE=* MODE=ADDVARIABLES
@@ -447,21 +488,21 @@ if missing(nn_toegekend) & nn_toegekend_max=1 #teverwijderen=1.
 SELECT IF (#teverwijderen = 0).
 EXECUTE.
 
+* opnieuw nagaan in welke eigendommen nog plaats is.
 delete variables toegekende_inwoners.
 AGGREGATE
   /OUTFILE=* MODE=ADDVARIABLES
   /BREAK=eigendom_id
   /toegekende_inwoners=sum(nn_toegekend).
 
-
+* gooi mensen weg die je potentieel zou kunnen toekennen aan eigendommen die al vol zitten.
 compute #teverwijderen=0.
-if huidig_bewoond=toegekende_inwoners & missing(nn_toegekend) #teverwijderen=1.
+if huidig_bewoond<=toegekende_inwoners & missing(nn_toegekend) #teverwijderen=1.
 SELECT IF (#teverwijderen = 0).
 EXECUTE.
 
 
-
-* Identify Duplicate Cases.
+* nog een keer opnieuw!.
 SORT CASES BY NATIONAAL_NUMMER(A).
 MATCH FILES
   /FILE=*
@@ -603,3 +644,4 @@ SAVE OUTFILE='C:\temp\kadaster\werkbestanden\koppeltabel_rrgezinshoofd_eigendom.
 dataset close bevolking.
 dataset close huishoudens.
 dataset close backupkoppeling.
+
