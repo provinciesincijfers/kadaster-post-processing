@@ -271,9 +271,9 @@ recode aard
 ('BOOMGAARD HOOG'=10)
 ('BOUWLAND'=1) into nature.
 
-*indeling statbel (obv data2020) naar rubrieken. (KB09032021) - nog niet helemaal volledig.
+*indeling statbel (obv data2020) naar rubrieken. (KB09032021) - nog niet helemaal volledig en script nog niet juist.
 
-recode nature
+ * recode nature
 (1=1AE)
 (2=1BC)
 (3=1BC)
@@ -489,7 +489,7 @@ recode nature
 (540=1MNOP)
 (541=1MNOP) into rubriek2.
 
-value labels rubriek2
+ * value labels rubriek2
 1AE 'akkerland, niet elders genoemd  (1AE)'
 1BC 'grasland  (1BC)'
 1DI 'tuinen en parken  (1DI)'
@@ -516,7 +516,7 @@ value labels rubriek2
 2Q 'recreatie, sport  (2Q)'
 2RST 'andere  (2RST)'.
 
-recode rubriek2
+ * recode rubriek2
 (1AE=1TOT)
 (1BC=1TOT)
 (1DI=1TOT)
@@ -541,9 +541,9 @@ recode rubriek2
 (2O=2TOT)
 (2P=2TOT)
 (2Q=2TOT)
-(2RST=2TOT) into rubriek1
+(2RST=2TOT) into rubriek1.
 
-value labels rubriek1
+ * value labels rubriek1
 1TOT 'totaal onbebouwde percelen (1TOT)'
 2TOT 'totaal bebouwde percelen (2TOT)'.
 
@@ -563,8 +563,7 @@ value labels rubriek1
 
 
 
-* indeling Vreidi. (@Joost: wat betekent dit?)
-***let op hoofdgebruik is niet hetzelfde als hoofdgroep (zie verder)
+* indeling Vreidi, naar hoofdgebruik.
 
 recode nature
 (220=1)
@@ -1063,7 +1062,7 @@ value labels detailgebruik
 * EINDE INDELING VREIDI.
 
 
-* NIS-indeling.
+* NIS-indeling naar hoofdgroep.
 *** Deze is nog onvolledig
 
 recode nature 
