@@ -2,7 +2,7 @@
 * OPGELET: er is een harde compute period=2019 nodig vlak voor het aggregeren naar swing.
 
 * map met alle kadasterdata.
-DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'F:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
@@ -42,6 +42,15 @@ if v2210_eengezin_meergezin=1 & soort_bebouwing="Gesloten bebouwing" v2210_bouwv
 if v2210_eengezin_meergezin=2 v2210_bouwvorm = 4.
 
 
+* aangepaste dimensie nav issue 12. 
+compute v2210_v2210_woningtype_bouwvorm=4.
+if v2210_eengezin_meergezin=1 & soort_bebouwing="Open bebouwing" v2210_woningtype_bouwvorm = 1.
+if v2210_eengezin_meergezin=1 & soort_bebouwing="Halfopen bebouwing" v2210_woningtype_bouwvorm = 2.
+if v2210_eengezin_meergezin=1 & soort_bebouwing="Gesloten bebouwing" v2210_woningtype_bouwvorm = 3.
+if v2210_eengezin_meergezin=2 & woongelegenheden<5 v2210_woningtype_bouwvorm = 5.
+if v2210_eengezin_meergezin=2 & woongelegenheden>5 & woongelegenheden<11 v2210_woningtype_bouwvorm = 6.
+if v2210_eengezin_meergezin=2 & woongelegenheden>10 v2210_woningtype_bouwvorm = 7.
+
 
 * VERWIJDER WAT NIET NODIG IS.
 * verwijder bewoning zonder link eerst.
@@ -65,7 +74,7 @@ woongelegenheden
 stat_sector
 hurende_huishoudens
 inwonend_eigenaarsgezin eigenaar_huurder 
-v2210_woonfunctie v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin ki inkomen.
+v2210_woonfunctie v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm ki inkomen.
 EXECUTE.
 
 *frequencies  v2210_woonfunctie eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin.
@@ -149,7 +158,7 @@ RENAME VARIABLES jaartal=period.
 DATASET DECLARE kubus1.
 AGGREGATE
   /OUTFILE='kubus1'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm
   /kubus2210_woongelegenheden=SUM(kubus2210_woongelegenheden).
 
 * we voegen ook een verwerking op gemeenteniveau toe - strikt gezien niet nodig, maar helpt Swing vlotter werken.
@@ -177,7 +186,7 @@ compute geolevel="gemeente".
 DATASET DECLARE kubus2.
 AGGREGATE
   /OUTFILE='kubus2'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm 
   /kubus2210_woongelegenheden=SUM(kubus2210_woongelegenheden).
 
 
@@ -225,7 +234,7 @@ EXECUTE.
 DATASET DECLARE kubus1.
 AGGREGATE
   /OUTFILE='kubus1'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin 
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm 
 v2210_ki_bebouwd v2210_ki_belast
   /kubus2210_ki=SUM(kubus2210_ki).
 
@@ -254,7 +263,7 @@ compute geolevel="gemeente".
 DATASET DECLARE kubus2.
 AGGREGATE
   /OUTFILE='kubus2'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm
   v2210_ki_bebouwd v2210_ki_belast
   /kubus2210_ki=SUM(kubus2210_ki).
 
@@ -287,7 +296,7 @@ EXECUTE.
 DATASET DECLARE kubus1.
 AGGREGATE
   /OUTFILE='kubus1'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin 
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm 
   /kubus2210_ki_bebouwdbelast=SUM(kubus2210_ki).
 
 * we voegen ook een verwerking op gemeenteniveau toe - strikt gezien niet nodig, maar helpt Swing vlotter werken.
@@ -315,7 +324,7 @@ compute geolevel="gemeente".
 DATASET DECLARE kubus2.
 AGGREGATE
   /OUTFILE='kubus2'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm
   /kubus2210_ki_bebouwdbelast=SUM(kubus2210_ki_bebouwdbelast).
 
 
