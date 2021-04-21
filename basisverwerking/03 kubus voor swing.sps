@@ -43,14 +43,15 @@ if v2210_eengezin_meergezin=2 v2210_bouwvorm = 4.
 
 
 * aangepaste dimensie nav issue 12. 
-compute v2210_v2210_woningtype_bouwvorm=4.
+compute v2210_woningtype_bouwvorm=$sysmis.
 if v2210_eengezin_meergezin=1 & soort_bebouwing="Open bebouwing" v2210_woningtype_bouwvorm = 1.
 if v2210_eengezin_meergezin=1 & soort_bebouwing="Halfopen bebouwing" v2210_woningtype_bouwvorm = 2.
 if v2210_eengezin_meergezin=1 & soort_bebouwing="Gesloten bebouwing" v2210_woningtype_bouwvorm = 3.
-if v2210_eengezin_meergezin=2 & woongelegenheden<5 v2210_woningtype_bouwvorm = 5.
-if v2210_eengezin_meergezin=2 & woongelegenheden>5 & woongelegenheden<11 v2210_woningtype_bouwvorm = 6.
-if v2210_eengezin_meergezin=2 & woongelegenheden>10 v2210_woningtype_bouwvorm = 7.
-
+if v2210_eengezin_meergezin=1 & missing(v2210_woningtype_bouwvorm) v2210_woningtype_bouwvorm = 4.
+if v2210_eengezin_meergezin=2 & woongelegenheden_perceel_tot<=5 v2210_woningtype_bouwvorm = 5.
+if v2210_eengezin_meergezin=2 & woongelegenheden_perceel_tot>5 & woongelegenheden_perceel_tot<=10 v2210_woningtype_bouwvorm = 6.
+if v2210_eengezin_meergezin=2 & woongelegenheden_perceel_tot>10 v2210_woningtype_bouwvorm = 7.
+freq v2210_woningtype_bouwvorm.
 
 * VERWIJDER WAT NIET NODIG IS.
 * verwijder bewoning zonder link eerst.
