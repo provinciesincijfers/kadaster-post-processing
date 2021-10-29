@@ -1,14 +1,15 @@
 * Encoding: windows-1252.
 
 * map met alle kadasterdata.
-DEFINE datamap () 'F:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
 DEFINE github () 'C:\github\' !ENDDEFINE.
+* je hebt met name de repository "gebiedsniveaus" nodig.
 
 * jaartal waarvoor we werken.
-DEFINE datajaar () '2020' !ENDDEFINE.
+DEFINE datajaar () '2021' !ENDDEFINE.
 
 
 GET

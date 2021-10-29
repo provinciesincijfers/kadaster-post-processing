@@ -1,20 +1,25 @@
 * Encoding: windows-1252.
 
 * map met alle kadasterdata.
-DEFINE datamap () 'F:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
-DEFINE github () 'C:\github\' !ENDDEFINE.
+* DEFINE github () 'C:\github\' !ENDDEFINE.
+* (hier uitgegrijsd omdat je die hier nog niet odig hebt)
 
 * jaartal waarvoor we werken.
-DEFINE datajaar () '2019' !ENDDEFINE.
+DEFINE datajaar () '2021' !ENDDEFINE.
 
 
 
 GET
   FILE=datamap+ 'werkbestanden\eigendom_' + datajaar + '.sav'.
 DATASET NAME eigendommen WINDOW=FRONT.
+
+* vanaf 2021 betekent "wooneenheden=999" dat er geen wooneenheden zijn. In 2020 kwam dit nooit voor.
+recode wooneenheden (999=sysmis).
+
 
 * geef mooi aan vanaf welk punt je dingen zelf hebt gedaan.
 compute AFGELEIDE_VARIABELEN=$sysmis.

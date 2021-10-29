@@ -5,13 +5,14 @@ SET OLang=English Unicode=No Locale=nl_BE Small=0.0001 THREADS=AUTO Printback=On
 
 
 * locatie hoofdmap.
-DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
 * gaat ervan uit dat je deze mappen hebt:
 2018: met de bestanden 2018
 2019: met de bestanden 2019
-werkbestanden: voor alle sav files.
-* als bestanden voor 2020 toekomen:
-- maak een mapje 2020 met die bestanden
+enzovoorts.
+* werkbestanden: voor alle sav files.
+* als bestanden voor een nieuw jaar toekomen:
+- maak een mapje met het nieuwe jaartal met die bestanden
 - zorg dat KAD_XXXX_koppeling.txt verwijst naar meest recente jaar.
 
 PRESERVE.
@@ -168,12 +169,64 @@ SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2020.sav'
   /COMPRESSED.
 
 
+
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE=datamap + '2021\KAD_2021_eigendom.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  provincie A4
+  jaartal F4.0
+  capakey A17
+  eigendom_id F9.0
+  straatnaam A100
+  KI F5.0
+  inkomen A10
+  oppervlakte F5.0
+  bewoonbaar A1
+  aard A100
+  afdelingsnummer A5
+  bewoner_code A1
+  eigenaarstype A8
+  medeeigenaars A1
+  bouwjaar F4.0
+  laatste_wijziging F4.0
+  soort_bebouwing A25
+  subtype_woning A150
+  verdieping F2.0
+  bovengrondse_verdiepingen F1.0
+  wooneenheden F1.0
+  huidig_bewoond F1.0
+  max_bewoond F1.0
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME eigendom WINDOW=FRONT.
+
+freq jaartal.
+
+
+
+SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2021.sav'
+  /COMPRESSED.
+
+
+
+
 * deze steeds enkel voor het meest recente jaar.
 PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
-  /FILE=datamap + '2020\KAD_2020_koppeling.txt'
+  /FILE=datamap + '2021\KAD_2021_koppeling.txt'
   /ENCODING='UTF8'
   /DELCASE=LINE
   /DELIMITERS="\t"
