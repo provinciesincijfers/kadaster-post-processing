@@ -1,5 +1,7 @@
 * Encoding: windows-1252.
 
+* todo bij verwerking 2022: opletten dat bouwjaar/wijzigingsjaar 2021 in de juiste categoriën terechtkomt in platte onderwerpen en kubussen.
+
 * map met alle kadasterdata.
 DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
