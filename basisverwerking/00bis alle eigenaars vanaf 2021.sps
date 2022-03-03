@@ -400,4 +400,23 @@ SAVE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2021.sav'
   /COMPRESSED.
 
 
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2021.csv'
+  /TYPE=CSV
+  /ENCODING='Locale'
+  /MAP
+  /REPLACE
+  /FIELDNAMES
+  /CELLS=VALUES
+/replace.
+
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2021.sas7bdat'
+  /TYPE=SAS
+  /VERSION=7
+  /PLATFORM=WINDOWS
+  /ENCODING='Locale'
+  /MAP
+  /REPLACE.
+
+
+
 
