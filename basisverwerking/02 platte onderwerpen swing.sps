@@ -1,7 +1,7 @@
 * Encoding: windows-1252.
 
 * map met alle kadasterdata.
-DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'H:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
@@ -9,7 +9,7 @@ DEFINE github () 'C:\github\' !ENDDEFINE.
 * je hebt met name de repository "gebiedsniveaus" nodig.
 
 * jaartal waarvoor we werken.
-DEFINE datajaar () '2021' !ENDDEFINE.
+DEFINE datajaar () '2022' !ENDDEFINE.
 
 
 GET
@@ -53,6 +53,7 @@ if bouwjaar_cat_wgl=8 v2210_wv_bj_1981_1990=woongelegenheden.
 if bouwjaar_cat_wgl=9 v2210_wv_bj_1991_2000=woongelegenheden.
 if bouwjaar_cat_wgl=10 v2210_wv_bj_2001_2010=woongelegenheden.
 if bouwjaar_cat_wgl=11 v2210_wv_bj_2011_2020=woongelegenheden.
+if bouwjaar_cat_wgl=12 v2210_wv_bj_2021_2030=woongelegenheden.
 if bouwjaar_cat_wgl=13 v2210_wv_bj_onbekend=woongelegenheden. 
 if bouwjaar_clean>=2015  v2210_wv_bj_2015p=woongelegenheden.
 
@@ -62,6 +63,7 @@ if laatste_wijziging_cat_wgl=8 v2210_wv_lw_1983_1990=woongelegenheden.
 if laatste_wijziging_cat_wgl=9 v2210_wv_lw_1991_2000=woongelegenheden.
 if laatste_wijziging_cat_wgl=10 v2210_wv_lw_2001_2010=woongelegenheden.
 if laatste_wijziging_cat_wgl=11 v2210_wv_lw_2011_2020=woongelegenheden.
+if laatste_wijziging_cat_wgl=12 v2210_wv_lw_2021_2030=woongelegenheden.
 if laatste_wijziging_cat_wgl=13 v2210_wv_lw_onbekend=woongelegenheden.
 if laatste_wijziging_clean>=2015  v2210_wv_lw_2015p=woongelegenheden.
 
@@ -70,9 +72,10 @@ if recentste_jaar>=1983 & recentste_jaar <= 1990 v2210_wgl_lwbj_1983_1990=woonge
 if recentste_jaar>=1991 & recentste_jaar <= 2000 v2210_wgl_lwbj_1991_2000=woongelegenheden.
 if recentste_jaar>=2001 & recentste_jaar <= 2010 v2210_wgl_lwbj_2001_2010=woongelegenheden.
 if recentste_jaar>=2011 & recentste_jaar <= 2020 v2210_wgl_lwbj_2011_2020=woongelegenheden.
-*if recentste_jaar>=2021 & recentste_jaar <= 1990 v2210_wgl_lwbj_2021_2030=woongelegenheden.
+if recentste_jaar>=2021 v2210_wgl_lwbj_2021_2030=woongelegenheden.
 if recentste_jaar>=1983 v2210_wgl_lwbj_1983p=woongelegenheden.
 if recentste_jaar>=2015 v2210_wgl_lwbj_2015p=woongelegenheden.
+
 
 
 *voorbereiding.
@@ -124,7 +127,10 @@ AGGREGATE
 /v2210_egw_andere=sum(egw_andere_bouwvorm)
 /v2210_wv_bj_2015p=sum(v2210_wv_bj_2015p)
 /v2210_wv_lw_2015p=sum(v2210_wv_lw_2015p)
-/v2210_wgl_lwbj_2015p=sum(v2210_wgl_lwbj_2015p).
+/v2210_wgl_lwbj_2015p=sum(v2210_wgl_lwbj_2015p)
+/v2210_wv_bj_2021_2030=sum(v2210_wv_bj_2021_2030)
+/v2210_wv_lw_2021_2030=sum(v2210_wv_lw_2021_2030)
+/v2210_wgl_lwbj_2021_2030=sum(v2210_wgl_lwbj_2021_2030).
 
 
 
@@ -202,7 +208,10 @@ v2210_gesloten
 v2210_egw_andere 
 v2210_wv_bj_2015p
 v2210_wv_lw_2015p
-v2210_wgl_lwbj_2015p (f8.0).
+v2210_wgl_lwbj_2015p 
+v2210_wv_bj_2021_2030
+v2210_wv_lw_2021_2030
+v2210_wgl_lwbj_2021_2030 (f8.0).
 
 
 * regel1: indien gebied onbekend: enkel dingen inlezen indien nodig. Alle zinloze waarden vervangen we door -99996.
@@ -222,7 +231,9 @@ v2210_wv_lw_2001_2010 v2210_wv_lw_2011_2020 v2210_wv_lw_onbekend v2210_wgl_lwbj_
 v2210_wgl_lwbj_1991_2000 v2210_wgl_lwbj_2001_2010 v2210_wgl_lwbj_2011_2020 v2210_wgl_lwbj_1983p v2210_open
 v2210_halfopen v2210_gesloten v2210_egw_andere v2210_wv_bj_2015p
 v2210_wv_lw_2015p
-v2210_wgl_lwbj_2015p
+v2210_wgl_lwbj_2015p v2210_wv_bj_2021_2030
+v2210_wv_lw_2021_2030
+v2210_wgl_lwbj_2021_2030
 (0=-99996) (missing=-99996).
 end if.
 
@@ -239,7 +250,9 @@ v2210_wv_lw_2001_2010 v2210_wv_lw_2011_2020 v2210_wv_lw_onbekend v2210_wgl_lwbj_
 v2210_wgl_lwbj_1991_2000 v2210_wgl_lwbj_2001_2010 v2210_wgl_lwbj_2011_2020 v2210_wgl_lwbj_1983p
 v2210_open v2210_halfopen v2210_gesloten v2210_egw_andere v2210_wv_bj_2015p
 v2210_wv_lw_2015p
-v2210_wgl_lwbj_2015p
+v2210_wgl_lwbj_2015p v2210_wv_bj_2021_2030
+v2210_wv_lw_2021_2030
+v2210_wgl_lwbj_2021_2030
 (else=-99999).
 end if.
 
@@ -256,7 +269,9 @@ v2210_wv_lw_2001_2010 v2210_wv_lw_2011_2020 v2210_wv_lw_onbekend v2210_wgl_lwbj_
 v2210_wgl_lwbj_1991_2000 v2210_wgl_lwbj_2001_2010 v2210_wgl_lwbj_2011_2020 v2210_wgl_lwbj_1983p
 v2210_open v2210_halfopen v2210_gesloten v2210_egw_andere v2210_wv_bj_2015p
 v2210_wv_lw_2015p
-v2210_wgl_lwbj_2015p
+v2210_wgl_lwbj_2015p v2210_wv_bj_2021_2030
+v2210_wv_lw_2021_2030
+v2210_wgl_lwbj_2021_2030
 (missing=0).
 end if.
 

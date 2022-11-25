@@ -5,7 +5,7 @@ SET OLang=English Unicode=No Locale=nl_BE Small=0.0001 THREADS=AUTO Printback=On
 
 
 * locatie hoofdmap.
-DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'h:\data\kadaster\' !ENDDEFINE.
 * gaat ervan uit dat je deze mappen hebt:
 2018: met de bestanden 2018
 2019: met de bestanden 2019
@@ -204,6 +204,7 @@ GET DATA  /TYPE=TXT
   wooneenheden F1.0
   huidig_bewoond F1.0
   max_bewoond F1.0
+  woongelegenheden F8.0
   /MAP.
 RESTORE.
 
@@ -221,12 +222,62 @@ SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2021.sav'
 
 
 
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE=datamap + '2022\KAD_2022_eigendom.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  provincie A4
+  jaartal F4.0
+  capakey A17
+  eigendom_id F9.0
+  straatnaam A100
+  KI F5.0
+  inkomen A10
+  oppervlakte F5.0
+  bewoonbaar A1
+  aard A100
+  afdelingsnummer A5
+  bewoner_code A1
+  eigenaarstype A8
+  medeeigenaars A1
+  bouwjaar F4.0
+  laatste_wijziging F4.0
+  soort_bebouwing A25
+  subtype_woning A150
+  verdieping F2.0
+  bovengrondse_verdiepingen F1.0
+  wooneenheden F1.0
+  huidig_bewoond F1.0
+  max_bewoond F1.0
+  woongelegenheden F8.0
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME eigendom WINDOW=FRONT.
+
+freq jaartal.
+
+
+
+SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2022.sav'
+  /COMPRESSED.
+
+
 * deze steeds enkel voor het meest recente jaar.
 PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
-  /FILE=datamap + '2021\KAD_2021_koppeling.txt'
+  /FILE=datamap + '2022\KAD_2022_koppeling.txt'
   /ENCODING='UTF8'
   /DELCASE=LINE
   /DELIMITERS="\t"
@@ -251,6 +302,8 @@ EXECUTE.
 DATASET NAME koppeling WINDOW=FRONT.
 
 
+DATASET ACTIVATE koppeling.
+
 *FILTER OFF.
 *USE ALL.
 *SELECT IF (jaartal>0).
@@ -260,7 +313,6 @@ SAVE OUTFILE=datamap + 'werkbestanden\koppeling_meest_recent.sav'
   /COMPRESSED.
 
 
-DATASET ACTIVATE koppeling.
 * de eerste vijf tekens van de capakey bevatten een code die lijken op een niscode en die steeds volledig binnen één gemeente liggen.
 * we maken een tabel die het mogelijk maakt om op basis van die 5 tekens de niscode op te zoeken.
 * die tabel gebruiken we later om percelen (met unieke sleutel capakey) die niet aan een statsec gekoppeld kunnen worden toch nog aan een gemeente te koppelen.
