@@ -20,7 +20,7 @@ PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
-  /FILE= datamap + "2021\KAD_2021_alle_eigenaars.txt"
+  /FILE= datamap + "2022\KAD_2022_alle_eigenaars.txt"
   /DELCASE=LINE
   /DELIMITERS="\t"
   /ARRANGEMENT=DELIMITED
@@ -48,7 +48,7 @@ CACHE.
 EXECUTE.
 DATASET NAME alleeigenaars WINDOW=FRONT.
 
-SAVE OUTFILE=datamap + 'werkbestanden\alle_eigenaars_2021.sav'
+SAVE OUTFILE=datamap + 'werkbestanden\alle_eigenaars_2022.sav'
   /COMPRESSED.
 
 
@@ -60,10 +60,11 @@ AGGREGATE
   /aantal_eigenaars=N.
 * OPGELET: er zijn gevallen waar het maximum van "volgorde" kleiner is dan het "aantal eigenaars".
 
+* DIT IS NIET MEER NODIG, we hebben nu al een betere classificatie.
 *- classificeren eigenaars.
-recode naam (""=1) (else=2) into persoon_rechtspersoon.
-if identificatie="" persoon_rechtspersoon = 3.
-value labels persoon_rechtspersoon
+*recode naam (""=1) (else=2) into persoon_rechtspersoon.
+*if identificatie="" persoon_rechtspersoon = 3.
+*value labels persoon_rechtspersoon
 1 'persoon'
 2 'rechtspersoon'
 3 'onbekend'.
@@ -380,7 +381,7 @@ subadres
 volgorde
 recht
 aandeel_eigendom
-persoon_rechtspersoon
+type_persoon
 belgisch_eigenaar
 omschrijving1_clean
 teller1
@@ -397,11 +398,11 @@ omschrijving2).
 
 
 
-SAVE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2021.sav'
+SAVE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2022.sav'
   /COMPRESSED.
 
 
-SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2021.csv'
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2022.csv'
   /TYPE=CSV
   /ENCODING='Locale'
   /MAP
@@ -410,7 +411,7 @@ SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_20
   /CELLS=VALUES
 /replace.
 
-SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2021.sas7bdat'
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2022.sas7bdat'
   /TYPE=SAS
   /VERSION=7
   /PLATFORM=WINDOWS
