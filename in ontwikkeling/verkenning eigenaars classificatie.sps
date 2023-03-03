@@ -3,7 +3,7 @@
 
 
 GET
-  FILE='E:\data\kadaster\werkbestanden\eigendom_2021_basisafspraken.sav'.
+  FILE='h:\data\kadaster\werkbestanden\eigendom_2021_basisafspraken.sav'.
 DATASET NAME eigendommen WINDOW=FRONT.
 
 * verzamel woningen en KI per eigendom.
@@ -42,22 +42,11 @@ SELECT IF (eigendom_id > 0).
 EXECUTE.
 
 
-* koppel aan eigendommen.
+* koppel aan eigenaars.
 
 GET
-  FILE='E:\data\kadaster\werkbestanden\basisafspraken_alle_eigenaars_2021.sav'.
+  FILE='H:\data\kadaster\werkbestanden\basisafspraken_alle_eigenaars_2022.sav'.
 DATASET NAME eigenaars WINDOW=FRONT.
-
-* enigszins mottige fix voor ontbreken unieke ID eigenaar.
-alter type identificatie (a511).
-if  identificatie="" identificatie=concat(
-ltrim(rtrim(naam)),
-ltrim(rtrim(landcode)),
-ltrim(rtrim(postcode)),
-ltrim(rtrim(gemeente)),
-ltrim(rtrim(straatnaam)),
-ltrim(rtrim(huisbis)),
-ltrim(rtrim(subadres))).
 
 * maak een eigenaarsclassificatie:
 - hoeveel woningen in bezit
@@ -77,12 +66,11 @@ EXECUTE.
 DATASET DECLARE tussenbestand. 
 AGGREGATE 
   /OUTFILE='tussenbestand' 
-  /BREAK=identificatie aandeel_eigendom persoon_rechtspersoon v2210_ki_bebouwd v2210_ki_belast 
+  /BREAK=identificatie naam aandeel_eigendom type_persoon v2210_ki_bebouwd v2210_ki_belast 
     eigenaar_huurder 
   /KI_sum=SUM(KI) 
   /woongelegenheden_sum=SUM(woongelegenheden) 
   /N_BREAK=N.
-dataset name tussenbestand.
 
 
 
