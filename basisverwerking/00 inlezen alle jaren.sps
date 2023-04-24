@@ -73,6 +73,83 @@ PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
+  /FILE=datamap + '2018\KAD_2018_parcel.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /QUALIFIER='"'
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  propertySituationIdf f9.0
+  divCad f5.0
+  section a1
+  primaryNumber f4.0
+  bisNumber f2.0
+  exponentLetter a1
+  exponentNumber f3.0
+  partNumber a5
+  capakey A17
+  order a2
+  nature a3
+  descriptPrivate a35
+  block f1.0
+  floor f4.0
+  floorSituation a10
+  crossDetail a10
+  matUtil a10
+  notTaxedMatUtil a10
+  nisCom f5.0
+  street_situation a50
+  street_translation a50
+  street_code a5
+  number a50
+  polWa a7
+  surfaceNotTaxable f7.0
+  surfaceTaxable f7.0
+  surfaceVerif a1
+  constructionYear f4.0
+  soilIndex f1.0
+  soilRent f1.0
+  cadastralIncomePerSurface f5.0
+  cadastralIncomePerSurfaceOtherDi f3.0
+  numberCadastralIncome f1.0
+  charCadastralIncome a1
+  cadastralIncome f10.0
+  dateEndExoneration a15
+  decrete f3.0
+  constructionIndication f3.0
+  constructionType a1
+  floorNumberAboveground f3.0
+  garret f1.0
+  physModYear a4.0
+  constructionQuality a1
+  garageNumber f4.0
+  centralHeating f1.0
+  bathroomNumber f4.0
+  housingUnitNumber f4.0
+  placeNumber f4.0
+  builtSurface f8.0
+  usedSurface f6.0
+  dateSituation edate10
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME parcel WINDOW=FRONT.
+
+rename variables propertySituationIdf=eigendom_id.
+
+SAVE OUTFILE=datamap + 'werkbestanden\parcel_2018.sav'
+  /COMPRESSED.
+
+
+
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
   /FILE=datamap + '2019\KAD_2019_eigendom.txt'
   /DELCASE=LINE
   /DELIMITERS="\t"
@@ -118,6 +195,81 @@ SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2019.sav'
   /COMPRESSED.
 
 
+
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE=datamap + '2019\KAD_2019_parcel.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /QUALIFIER='"'
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  propertySituationIdf f9.0
+  divCad f5.0
+  section a1
+  primaryNumber f4.0
+  bisNumber f2.0
+  exponentLetter a1
+  exponentNumber f3.0
+  partNumber a5
+  capakey A17
+  order a2
+  nature a3
+  descriptPrivate a35
+  block f1.0
+  floor f4.0
+  floorSituation a10
+  crossDetail a10
+  matUtil a10
+  notTaxedMatUtil a10
+  nisCom f5.0
+  street_situation a50
+  street_translation a50
+  street_code a5
+  number a50
+  polWa a7
+  surfaceNotTaxable f7.0
+  surfaceTaxable f7.0
+  surfaceVerif a1
+  constructionYear f4.0
+  soilIndex f1.0
+  soilRent f1.0
+  cadastralIncomePerSurface f5.0
+  cadastralIncomePerSurfaceOtherDi f3.0
+  numberCadastralIncome f1.0
+  charCadastralIncome a1
+  cadastralIncome f10.0
+  dateEndExoneration a15
+  decrete f3.0
+  constructionIndication f3.0
+  constructionType a1
+  floorNumberAboveground f3.0
+  garret f1.0
+  physModYear a4.0
+  constructionQuality a1
+  garageNumber f4.0
+  centralHeating f1.0
+  bathroomNumber f4.0
+  housingUnitNumber f4.0
+  placeNumber f4.0
+  builtSurface f8.0
+  usedSurface f6.0
+  dateSituation edate10
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME parcel WINDOW=FRONT.
+
+rename variables propertySituationIdf=eigendom_id.
+
+SAVE OUTFILE=datamap + 'werkbestanden\parcel_2019.sav'
+  /COMPRESSED.
 
 
 PRESERVE.
@@ -174,6 +326,82 @@ PRESERVE.
  SET DECIMAL COMMA.
 
 GET DATA  /TYPE=TXT
+  /FILE=datamap + '2020\KAD_2020_parcel.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /QUALIFIER='"'
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  propertySituationIdf f9.0
+  divCad f5.0
+  section a1
+  primaryNumber f4.0
+  bisNumber f2.0
+  exponentLetter a1
+  exponentNumber f3.0
+  partNumber a5
+  capakey A17
+  order a2
+  nature a3
+  descriptPrivate a35
+  block f1.0
+  floor f4.0
+  floorSituation a10
+  crossDetail a10
+  matUtil a10
+  notTaxedMatUtil a10
+  nisCom f5.0
+  street_situation a50
+  street_translation a50
+  street_code a5
+  number a50
+  polWa a7
+  surfaceNotTaxable f7.0
+  surfaceTaxable f7.0
+  surfaceVerif a1
+  constructionYear f4.0
+  soilIndex f1.0
+  soilRent f1.0
+  cadastralIncomePerSurface f5.0
+  cadastralIncomePerSurfaceOtherDi f3.0
+  numberCadastralIncome f1.0
+  charCadastralIncome a1
+  cadastralIncome f10.0
+  dateEndExoneration a15
+  decrete f3.0
+  constructionIndication f3.0
+  constructionType a1
+  floorNumberAboveground f3.0
+  garret f1.0
+  physModYear a4.0
+  constructionQuality a1
+  garageNumber f4.0
+  centralHeating f1.0
+  bathroomNumber f4.0
+  housingUnitNumber f4.0
+  placeNumber f4.0
+  builtSurface f8.0
+  usedSurface f6.0
+  dateSituation edate10
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME parcel WINDOW=FRONT.
+
+rename variables propertySituationIdf=eigendom_id.
+
+SAVE OUTFILE=datamap + 'werkbestanden\parcel_2020.sav'
+  /COMPRESSED.
+
+
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
   /FILE=datamap + '2021\KAD_2021_eigendom.txt'
   /DELCASE=LINE
   /DELIMITERS="\t"
@@ -220,6 +448,81 @@ SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2021.sav'
   /COMPRESSED.
 
 
+
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE=datamap + '2021\KAD_2021_parcel.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /QUALIFIER='"'
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  propertySituationIdf f9.0
+  divCad f5.0
+  section a1
+  primaryNumber f4.0
+  bisNumber f2.0
+  exponentLetter a1
+  exponentNumber f3.0
+  partNumber a5
+  capakey A17
+  order a2
+  nature a3
+  descriptPrivate a35
+  block f1.0
+  floor f4.0
+  floorSituation a10
+  crossDetail a10
+  matUtil a10
+  notTaxedMatUtil a10
+  nisCom f5.0
+  street_situation a50
+  street_translation a50
+  street_code a5
+  number a50
+  polWa a7
+  surfaceNotTaxable f7.0
+  surfaceTaxable f7.0
+  surfaceVerif a1
+  constructionYear f4.0
+  soilIndex f1.0
+  soilRent f1.0
+  cadastralIncomePerSurface f5.0
+  cadastralIncomePerSurfaceOtherDi f3.0
+  numberCadastralIncome f1.0
+  charCadastralIncome a1
+  cadastralIncome f10.0
+  dateEndExoneration a15
+  decrete f3.0
+  constructionIndication f3.0
+  constructionType a1
+  floorNumberAboveground f3.0
+  garret f1.0
+  physModYear a4.0
+  constructionQuality a1
+  garageNumber f4.0
+  centralHeating f1.0
+  bathroomNumber f4.0
+  housingUnitNumber f4.0
+  placeNumber f4.0
+  builtSurface f8.0
+  usedSurface f6.0
+  dateSituation edate10
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME parcel WINDOW=FRONT.
+
+rename variables propertySituationIdf=eigendom_id.
+
+SAVE OUTFILE=datamap + 'werkbestanden\parcel_2021.sav'
+  /COMPRESSED.
 
 
 PRESERVE.
@@ -270,6 +573,84 @@ freq jaartal.
 
 SAVE OUTFILE=datamap + 'werkbestanden\eigendom_2022.sav'
   /COMPRESSED.
+
+
+
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE=datamap + '2022\KAD_2022_parcel.txt'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /QUALIFIER='"'
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  propertySituationIdf f9.0
+  divCad f5.0
+  section a1
+  primaryNumber f4.0
+  bisNumber f2.0
+  exponentLetter a1
+  exponentNumber f3.0
+  partNumber a5
+  capakey A17
+  order a2
+  nature a3
+  descriptPrivate a35
+  block f1.0
+  floor f4.0
+  floorSituation a10
+  crossDetail a10
+  matUtil a10
+  notTaxedMatUtil a10
+  nisCom f5.0
+  street_situation a50
+  street_translation a50
+  street_code a5
+  number a50
+  polWa a7
+  surfaceNotTaxable f7.0
+  surfaceTaxable f7.0
+  surfaceVerif a1
+  constructionYear f4.0
+  soilIndex f1.0
+  soilRent f1.0
+  cadastralIncomePerSurface f5.0
+  cadastralIncomePerSurfaceOtherDi f3.0
+  numberCadastralIncome f1.0
+  charCadastralIncome a1
+  cadastralIncome f10.0
+  dateEndExoneration a15
+  decrete f3.0
+  constructionIndication f3.0
+  constructionType a1
+  floorNumberAboveground f3.0
+  garret f1.0
+  physModYear a4.0
+  constructionQuality a1
+  garageNumber f4.0
+  centralHeating f1.0
+  bathroomNumber f4.0
+  housingUnitNumber f4.0
+  placeNumber f4.0
+  builtSurface f8.0
+  usedSurface f6.0
+  dateSituation edate10
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME parcel WINDOW=FRONT.
+
+rename variables propertySituationIdf=eigendom_id.
+
+SAVE OUTFILE=datamap + 'werkbestanden\parcel_2022.sav'
+  /COMPRESSED.
+
 
 
 * deze steeds enkel voor het meest recente jaar.

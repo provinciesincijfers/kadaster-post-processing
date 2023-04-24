@@ -13,7 +13,7 @@
 * maar in de dataset crabadres-rradres kan hetzelfde crab-adres meerdere keren voorkomen.
 * we moeten daarom de eigendom-crab data vermenigvuldigen om eerst ongeveer evenveel rijen te hebben.
 
-DEFINE datamap () 'f:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'h:\data\kadaster\' !ENDDEFINE.
 
 * er is telkens maar één rij per eigendom.
 GET
@@ -528,8 +528,6 @@ EXECUTE.
 
 *** einde weggooien foute rijen voor inwonende eigenaars.
 * voor 2.47 miljoen huishoudens kunnen we nu een zekere keuze maken.
-* door dit te doen zijn er mensen voor wie we plots zeker zijn. 
-
 
 AGGREGATE
   /OUTFILE=* MODE=ADDVARIABLES OVERWRITEVARS=YES
@@ -539,6 +537,7 @@ variable labels zekerheid 'inverse van zekerheid'.
 delete variables PrimaryFirst
 PrimaryLast
 MatchSequence behouden.
+
 
 
 * Identify Duplicate Cases.
@@ -561,53 +560,6 @@ if matchsequence_1=0 nn_toegekend=1.
 frequencies nn_toegekend.
 sort cases eigendom_id (a).
 
-delete variables PrimaryFirst_1
-PrimaryLast_1
-MatchSequence_1.
-
-AGGREGATE
-  /OUTFILE=* MODE=ADDVARIABLES
-  /BREAK=eigendom_id
-  /nn_toegekend_sum=SUM(nn_toegekend).
-
-if nn_toegekend_sum >= huidig_bewoond & missing(nn_toegekend) teverwijderen=1.
-
-AGGREGATE
-  /OUTFILE=* MODE=ADDVARIABLES
-  /BREAK=NATIONAAL_NUMMER
-  /teverwijderen_sum=SUM(teverwijderen).
-
-SELECT IF ((missing(teverwijderen) & teverwijderen_sum<zekerheid) | missing(teverwijderen_sum) ).
-EXECUTE.
-delete variables teverwijderen teverwijderen_sum zekerheid.
-AGGREGATE
-  /OUTFILE=* MODE=ADDVARIABLES OVERWRITEVARS=YES
-  /BREAK=NATIONAAL_NUMMER
-  /zekerheid=N.
-variable labels zekerheid 'inverse van zekerheid'.
-
-if zekerheid=1 & missing(nn_toegekend) & missing(nn_toegekend_sum) nn_toegekend=1.
-
-* einde toekennen extra zekerheid door wissen zekere eigenaars.
-
-
-
-* Identify Duplicate Cases.
-SORT CASES BY NATIONAAL_NUMMER(A).
-MATCH FILES
-  /FILE=*
-  /BY NATIONAAL_NUMMER
-  /FIRST=PrimaryFirst_1
-  /LAST=PrimaryLast_1.
-DO IF (PrimaryFirst_1).
-COMPUTE  MatchSequence_1=1-PrimaryLast_1.
-ELSE.
-COMPUTE  MatchSequence_1=MatchSequence_1+1.
-END IF.
-LEAVE  MatchSequence_1.
-FORMATS  MatchSequence_1 (f7).
-EXECUTE.
-
 * we hebben mensen een willekeurig volgnummer gegeven (id) en daarop gekoppeld in dit proces.
 * we hebben hier geteld de hoeveelste keer een mens voorkomt.
 * iedereen kan maar één keer voorkomen als "is de Nde keer deze mens en is de Nde keer dit volgnummer".
@@ -620,11 +572,6 @@ AGGREGATE
   /BREAK=NATIONAAL_NUMMER
   /nn_num2=N
   /nn_toegekend_max=max(nn_toegekend).
-
-delete variables PrimaryFirst_1
-PrimaryLast_1
-MatchSequence_1.
-
 
 compute #teverwijderen=0.
 if missing(nn_toegekend) & nn_toegekend_max=1 #teverwijderen=1.
@@ -645,7 +592,9 @@ SELECT IF (#teverwijderen = 0).
 EXECUTE.
 
 
-
+delete variables PrimaryFirst_1
+PrimaryLast_1
+MatchSequence_1.
 
 
 * volgende ronde.
@@ -865,8 +814,8 @@ dataset close huishoudens.
 dataset close backupkoppeling.
 
 
-* kortere naam omdat SAS daar over valt.
-SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\kt_rr_eig_2022.sas7bdat'
+
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\koppeltabel_rr_eig_2022.sas7bdat'
   /TYPE=SAS
   /VERSION=7
   /PLATFORM=WINDOWS

@@ -380,8 +380,8 @@ huisbis
 subadres
 volgorde
 recht
-aandeel_eigendom
 type_persoon
+aandeel_eigendom
 belgisch_eigenaar
 omschrijving1_clean
 teller1
@@ -396,6 +396,15 @@ omschrijving2_clean=
 omschrijving1
 omschrijving2).
 
+variable labels
+aandeel_eigendom "aandeel eigendom (na allerlei correcties en aannames)"
+belgisch_eigenaar "eigenaar Belgisch / buitenlands / onbekend"
+omschrijving1 "type eigenaar eerste deel"
+teller1 "teller eerste deel aandeel eigendom"
+noemer1 "noemer eerste deel aandeel eigendom"
+omschrijving2 "type eigenaar tweede deel"
+teller2 "teller tweede deel aandeel eigendom"
+noemer2 "noemer tweede deel aandeel eigendom".
 
 
 SAVE OUTFILE=datamap + 'werkbestanden\basisafspraken_alle_eigenaars_2022.sav'

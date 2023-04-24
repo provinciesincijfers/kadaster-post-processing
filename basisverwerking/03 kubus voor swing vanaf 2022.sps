@@ -2,7 +2,7 @@
 * OPGELET: er is een harde compute period=2019 nodig vlak voor het aggregeren naar swing.
 
 * map met alle kadasterdata (gewoonlijk E:\data\kadaster\).
-DEFINE datamap () 'C:\temp\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'H:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
@@ -16,7 +16,9 @@ GET
   FILE=datamap +  'werkbestanden\eigendom_' + datajaar + '_basisafspraken.sav'.
 DATASET NAME eigendommen WINDOW=FRONT.
 
-
+* weg te werken upstream.b
+rename variables period=jaartal.
+rename variables geoitem=stat_sector.
 
 * LUIK 4: aggregatie naar Swing kubus.
 compute LUIK4=$sysmis.
@@ -75,7 +77,10 @@ woongelegenheden
 stat_sector
 hurende_huishoudens
 inwonend_eigenaarsgezin eigenaar_huurder 
-v2210_woonfunctie v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm ki inkomen.
+v2210_woonfunctie v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm ki inkomen
+verdiep verdiepen_perceel 
+v2210_aantal_kamers kamers_per_woning v2210_wgl_met_kamers v2210_woning_met_kamers
+v2210_woonoppervlakte v2210_wooneenheid_opp v2210_wgl_opp.
 EXECUTE.
 
 *frequencies  v2210_woonfunctie eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_bouwvorm v2210_eengezin_meergezin.
@@ -146,9 +151,55 @@ AGGREGATE
   /BREAK=eigendom_id
   /deaggregatieteller=N.
 
+* dimensie oppervlakte.
+compute opp_per_wgl=v2210_woonoppervlakte/v2210_wgl_opp.
+* antwerp style recode opp_per_wgl (lowest thru 60 = 1)
+(60 thru 80 = 2)
+(80 thru 100 = 3)
+(100 thru 120 = 4)
+(120 thru 140 = 5)
+(140 thru 160 = 6)
+(160 thru highest = 7) into v2210_opp_per_wgl.
 
+recode opp_per_wgl  (lowest thru 59.999 = 1)
+(60 thru 79.999 = 2)
+(80 thru 99.999 = 3)
+(100 thru 119.999 = 4)
+(120 thru 159.999 = 5)
+(160 thru 199.999 = 6)
+(200 thru 249.999 = 7)
+(250 thru highest = 8) (missing=0) into v2210_opp_per_wgl.
+* ondergrens is > dan bovengrens <=.
+
+
+* dimensie kamers.
+recode kamers_per_woning
+(lowest thru 2.999 = 1)
+(3 thru 3.999 = 2)
+(4 thru 4.999 = 3)
+(5 thru 5.999 = 4)
+(6 thru 6.999 = 5)
+(7 thru highest = 6)
+ (missing=0) into v2210_kamers_per_wgl.
+
+* bouwlagen.
+compute bouwlagen = verdiepen_inc_dakverdiep+1.
+recode bouwlagen
+(lowest thru 1 = 1)
+(2 thru 2 = 2)
+(2 thru 3 = 3)
+(3 thru 4 = 4)
+(4 thru 6 = 5)
+(6 thru 9 = 6)
+(9 thru 30 = 7)
+(30 thru highest = 0)
+ (missing=0) into v2210_bouwlagen.
 
 * KUBUS WOONGELEGENHEDEN.
+
+
+
+
 
 
 * verwerking op statsec.
@@ -156,10 +207,14 @@ string geolevel (a15).
 compute geolevel="statsec".
 rename variables stat_sector=geoitem.
 RENAME VARIABLES jaartal=period.
+
+
+
+
 DATASET DECLARE kubus1.
 AGGREGATE
   /OUTFILE='kubus1'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_woningtype_bouwvorm v2210_opp_per_wgl v2210_kamers_per_wgl v2210_bouwlagen
   /kubus2210_woongelegenheden=SUM(kubus2210_woongelegenheden).
 
 * we voegen ook een verwerking op gemeenteniveau toe - strikt gezien niet nodig, maar helpt Swing vlotter werken.
@@ -187,7 +242,7 @@ compute geolevel="gemeente".
 DATASET DECLARE kubus2.
 AGGREGATE
   /OUTFILE='kubus2'
-  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_laatste_wijziging_cat v2210_woningtype_bouwvorm 
+  /BREAK=period geolevel geoitem v2210_woonfunctie v2210_eigenaar_huurder v2210_bouwjaar_cat v2210_woningtype_bouwvorm v2210_opp_per_wgl v2210_kamers_per_wgl v2210_bouwlagen
   /kubus2210_woongelegenheden=SUM(kubus2210_woongelegenheden).
 
 
@@ -201,8 +256,10 @@ dataset close gemeente.
 dataset close kubus2.
 dataset close subset.
 
+rename variables kubus2210_woongelegenheden = kubus2210_wgl_uitgebreid.
 
-SAVE TRANSLATE OUTFILE=datamap + 'upload\kubus_woongelegenheden_' + datajaar + '.xlsx'
+
+SAVE TRANSLATE OUTFILE=datamap + 'upload\kubus_woongelegenheden_' + datajaar + '_uitgebreid.xlsx'
   /TYPE=XLS
   /VERSION=12
   /MAP
