@@ -3,7 +3,7 @@
 * todo bij verwerking 2022: opletten dat bouwjaar/wijzigingsjaar 2021 in de juiste categoriën terechtkomt in platte onderwerpen en kubussen.
 
 * map met alle kadasterdata.
-DEFINE datamap () 'h:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'e:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
@@ -11,7 +11,7 @@ DEFINE github () 'C:\github\' !ENDDEFINE.
 
 
 * jaartal waarvoor we werken.
-DEFINE datajaar () '2018' !ENDDEFINE.
+DEFINE datajaar () '2022' !ENDDEFINE.
 
 
 
@@ -632,7 +632,7 @@ if floor>=0 verdiep=floor.
 * hoogste gebouw van Belgie heeft 36 verdiepen.
 recode n_verdiep verdiep (37 thru highest=sysmis).
 * eigendommen met een negatief aantal verdiepen tellen we niet mee.
-recode n_verdiep (lowest thru 0=sysmis) (37 thru highest=sysmis).
+recode n_verdiep (lowest thru -1=sysmis) (37 thru highest=sysmis).
 
 * enkel verdiepen tellen op bebouwde aarden.
 if char.substr(nis_indeling,1,1)="1" n_verdiep=$sysmis.
