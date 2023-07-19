@@ -3,7 +3,7 @@
 * todo bij verwerking 2022: opletten dat bouwjaar/wijzigingsjaar 2021 in de juiste categoriën terechtkomt in platte onderwerpen en kubussen.
 
 * map met alle kadasterdata.
-DEFINE datamap () 'e:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
@@ -760,7 +760,7 @@ variable labels v2210_wgl_opp 'wgl met gekende nuttige oppervlakte'.
 SAVE OUTFILE= datamap +  'werkbestanden\eigendom_' + datajaar + '_basisafspraken.sav'
   /COMPRESSED.
 
-*SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\eigendom_' + datajaar + '_basisafspraken.csv'
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\eigendom_' + datajaar + '_basisafspraken.csv'
   /TYPE=CSV
   /ENCODING='Locale'
   /MAP
@@ -769,7 +769,7 @@ SAVE OUTFILE= datamap +  'werkbestanden\eigendom_' + datajaar + '_basisafspraken
   /CELLS=VALUES
 /replace.
 
-*SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\eigendom_' + datajaar + '_basisafspraken.sas7bdat'
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\eigendom_' + datajaar + '_basisafspraken.sas7bdat'
   /TYPE=SAS
   /VERSION=7
   /PLATFORM=WINDOWS

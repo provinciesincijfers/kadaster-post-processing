@@ -1,6 +1,8 @@
 * Encoding: windows-1252.
 * OPGELET: er is een harde compute period=2019 nodig vlak voor het aggregeren naar swing.
 
+* hierin wordt ook oppervlakte, bouwlagen en woonkamers meegenomen (nog niet in productie 7/2023).
+
 * map met alle kadasterdata (gewoonlijk E:\data\kadaster\).
 DEFINE datamap () 'H:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.

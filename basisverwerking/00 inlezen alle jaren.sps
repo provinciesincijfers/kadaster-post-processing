@@ -13,7 +13,112 @@ enzovoorts.
 * werkbestanden: voor alle sav files.
 * als bestanden voor een nieuw jaar toekomen:
 - maak een mapje met het nieuwe jaartal met die bestanden
-- zorg dat KAD_XXXX_koppeling.txt verwijst naar meest recente jaar.
+- voeg de code voor een nieuw jaar toe door een kopie te maken van de code voor een bestaand jaar, dus de code hieronder om eigendom en parcel te verwerken.
+
+* de "koppeling" moet steeds enkel gedraaid worden voor het meest recente jaar.
+PRESERVE.
+ SET DECIMAL COMMA.
+
+GET DATA  /TYPE=TXT
+  /FILE=datamap + '2022\KAD_2022_koppeling.txt'
+  /ENCODING='UTF8'
+  /DELCASE=LINE
+  /DELIMITERS="\t"
+  /ARRANGEMENT=DELIMITED
+  /FIRSTCASE=2
+  /DATATYPEMIN PERCENTAGE=95.0
+  /VARIABLES=
+  provincie A4
+  jaartal F4.0
+  capakey A17
+  niscode F5.0
+  stat_sector A9
+  bouwblok_code A50
+  kern A50
+  deelgemeente A50
+  laatste_jaar F4.0
+  /MAP.
+RESTORE.
+
+CACHE.
+EXECUTE.
+DATASET NAME koppeling WINDOW=FRONT.
+
+
+DATASET ACTIVATE koppeling.
+
+*FILTER OFF.
+*USE ALL.
+*SELECT IF (jaartal>0).
+*EXECUTE.
+
+SAVE OUTFILE=datamap + 'werkbestanden\koppeling_meest_recent.sav'
+  /COMPRESSED.
+
+
+* de eerste vijf tekens van de capakey bevatten een code die lijken op een niscode en die steeds volledig binnen één gemeente liggen.
+* we maken een tabel die het mogelijk maakt om op basis van die 5 tekens de niscode op te zoeken.
+* die tabel gebruiken we later om percelen (met unieke sleutel capakey) die niet aan een statsec gekoppeld kunnen worden toch nog aan een gemeente te koppelen.
+STRING  capa5 (A5).
+COMPUTE capa5=capakey.
+EXECUTE.
+
+DATASET ACTIVATE koppeling.
+DATASET DECLARE tussentabel.
+AGGREGATE
+  /OUTFILE='tussentabel'
+  /BREAK=capa5 niscode
+  /N_BREAK=N.
+dataset activate tussentabel.
+alter type capa5 (f5.0).
+
+DATASET ACTIVATE tussentabel.
+* we verwijderden enkel ongeldige percelen.
+FILTER OFF.
+USE ALL.
+SELECT IF (capa5 > 0).
+EXECUTE.
+* Identify Duplicate Cases.
+SORT CASES BY capa5(A) N_BREAK(A).
+MATCH FILES
+  /FILE=*
+  /BY capa5
+  /LAST=PrimaryLast.
+VARIABLE LABELS  PrimaryLast 'Indicator of each last matching case as Primary'.
+VALUE LABELS  PrimaryLast 0 'Duplicate Case' 1 'Primary Case'.
+VARIABLE LEVEL  PrimaryLast (ORDINAL).
+EXECUTE.
+FILTER OFF.
+USE ALL.
+SELECT IF (PrimaryLast=1).
+EXECUTE.
+match files
+/file=*
+/keep=capa5
+niscode.
+alter type capa5 (a5).
+sort cases capa5 (a).
+
+
+
+SAVE OUTFILE=datamap + 'werkbestanden\x_capa5_niscode.sav'
+  /COMPRESSED.
+
+
+
+SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\capa5_niscode.csv'
+  /TYPE=CSV
+  /ENCODING='UTF8'
+  /MAP
+  /REPLACE
+  /FIELDNAMES
+  /CELLS=VALUES.
+
+dataset close koppeling.
+dataset close eigendom.
+
+
+
 
 PRESERVE.
  SET DECIMAL COMMA.
@@ -652,105 +757,3 @@ SAVE OUTFILE=datamap + 'werkbestanden\parcel_2022.sav'
   /COMPRESSED.
 
 
-
-* deze steeds enkel voor het meest recente jaar.
-PRESERVE.
- SET DECIMAL COMMA.
-
-GET DATA  /TYPE=TXT
-  /FILE=datamap + '2022\KAD_2022_koppeling.txt'
-  /ENCODING='UTF8'
-  /DELCASE=LINE
-  /DELIMITERS="\t"
-  /ARRANGEMENT=DELIMITED
-  /FIRSTCASE=2
-  /DATATYPEMIN PERCENTAGE=95.0
-  /VARIABLES=
-  provincie A4
-  jaartal F4.0
-  capakey A17
-  niscode F5.0
-  stat_sector A9
-  bouwblok_code A50
-  kern A50
-  deelgemeente A50
-  laatste_jaar F4.0
-  /MAP.
-RESTORE.
-
-CACHE.
-EXECUTE.
-DATASET NAME koppeling WINDOW=FRONT.
-
-
-DATASET ACTIVATE koppeling.
-
-*FILTER OFF.
-*USE ALL.
-*SELECT IF (jaartal>0).
-*EXECUTE.
-
-SAVE OUTFILE=datamap + 'werkbestanden\koppeling_meest_recent.sav'
-  /COMPRESSED.
-
-
-* de eerste vijf tekens van de capakey bevatten een code die lijken op een niscode en die steeds volledig binnen één gemeente liggen.
-* we maken een tabel die het mogelijk maakt om op basis van die 5 tekens de niscode op te zoeken.
-* die tabel gebruiken we later om percelen (met unieke sleutel capakey) die niet aan een statsec gekoppeld kunnen worden toch nog aan een gemeente te koppelen.
-STRING  capa5 (A5).
-COMPUTE capa5=capakey.
-EXECUTE.
-
-DATASET ACTIVATE koppeling.
-DATASET DECLARE tussentabel.
-AGGREGATE
-  /OUTFILE='tussentabel'
-  /BREAK=capa5 niscode
-  /N_BREAK=N.
-dataset activate tussentabel.
-alter type capa5 (f5.0).
-
-DATASET ACTIVATE tussentabel.
-* we verwijderden enkel ongeldige percelen.
-FILTER OFF.
-USE ALL.
-SELECT IF (capa5 > 0).
-EXECUTE.
-* Identify Duplicate Cases.
-SORT CASES BY capa5(A) N_BREAK(A).
-MATCH FILES
-  /FILE=*
-  /BY capa5
-  /LAST=PrimaryLast.
-VARIABLE LABELS  PrimaryLast 'Indicator of each last matching case as Primary'.
-VALUE LABELS  PrimaryLast 0 'Duplicate Case' 1 'Primary Case'.
-VARIABLE LEVEL  PrimaryLast (ORDINAL).
-EXECUTE.
-FILTER OFF.
-USE ALL.
-SELECT IF (PrimaryLast=1).
-EXECUTE.
-match files
-/file=*
-/keep=capa5
-niscode.
-alter type capa5 (a5).
-sort cases capa5 (a).
-
-
-
-SAVE OUTFILE=datamap + 'werkbestanden\x_capa5_niscode.sav'
-  /COMPRESSED.
-
-
-
-SAVE TRANSLATE OUTFILE=datamap + 'werkbestanden\capa5_niscode.csv'
-  /TYPE=CSV
-  /ENCODING='UTF8'
-  /MAP
-  /REPLACE
-  /FIELDNAMES
-  /CELLS=VALUES.
-
-dataset close koppeling.
-dataset close eigendom.

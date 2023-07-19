@@ -15,6 +15,8 @@ enzovoorts.
 - maak een mapje met het nieuwe jaartal met die bestanden
 - zorg dat KAD_XXXX_koppeling.txt verwijst naar meest recente jaar.
 
+* op dit moment wordt de breuk voor eigenaar enkel ingevuld voor sommige type eigendom (met name NIET voor vruchtgebruikers). De werkgroep lijkt dat geen goed idee te vinden.
+
 
 PRESERVE.
  SET DECIMAL COMMA.

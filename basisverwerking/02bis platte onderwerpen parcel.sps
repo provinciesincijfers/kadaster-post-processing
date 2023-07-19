@@ -2,7 +2,7 @@
 
 
 * map met alle kadasterdata.
-DEFINE datamap () 'H:\data\kadaster\' !ENDDEFINE.
+DEFINE datamap () 'E:\data\kadaster\' !ENDDEFINE.
 * dit gaat ervan uit dat je een map "upload" hebt in deze map.
 
 * map met alle data die van Github komt.
@@ -68,8 +68,6 @@ DATASET DECLARE agg0.
 AGGREGATE
   /OUTFILE='agg0'
   /BREAK=period capakey geoitem
-  /aard=first(aard)
- /woonfunctie=first(woonfunctie)
   /verdiepen_inc_dakverdiep_max=MAX(verdiepen_inc_dakverdiep).
 dataset activate agg0.
 
@@ -166,7 +164,7 @@ compute geolevel="statsec".
 
 
 
-* regel1: indien gebied onbekend: enkel dingen inlezen indien nodig. Alle zinloze waarden vervangen we door -99996.
+* regel 1: indien gebied onbekend: enkel dingen inlezen indien nodig. Alle zinloze waarden vervangen we door -99996.
 * regel 2: indien Brussel: ALLES is een brekende missings -99999 (TOGA).
 * regel 3: indien in een niet-onbekende statsec (alles behalve iets met "zzzz" is 0 = 0 en ook missing=0.
 
